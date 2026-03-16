@@ -9,7 +9,6 @@ Website: www.dariacode.dev
 import React, {Component} from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom';
 
-import AuthPage from './pages/Auth';
 import TasksPage from './pages/Tasks';
 import StatisticsPage from './pages/Statistics';
 import SettingsPage from './pages/Settings';
@@ -102,6 +101,7 @@ class App extends Component {
     // }
 
     render() {
+        console.log('App component rendering...');
         return (
             <BrowserRouter>
                 <React.Fragment>

@@ -13,10 +13,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import IconButton from '@material-ui/core/IconButton';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
-import {ReactComponent as NormalIcon} from './PriorityIcons/normal.svg';
-import {ReactComponent as MediumIcon} from './PriorityIcons/medium.svg';
-import {ReactComponent as LowIcon} from './PriorityIcons/low.svg';
-import {ReactComponent as HighIcon} from './PriorityIcons/high.svg';
+import NormalIcon from './PriorityIcons/normal.svg?react';
+import MediumIcon from './PriorityIcons/medium.svg?react';
+import LowIcon from './PriorityIcons/low.svg?react';
+import HighIcon from './PriorityIcons/high.svg?react';
 
 // Style for Material-UI components
 const useStyles = makeStyles((theme) => ({
