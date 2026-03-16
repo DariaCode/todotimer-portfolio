@@ -7,7 +7,7 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Navigate, Routes } from 'react-router-dom';
 
 import AuthPage from './pages/Auth';
 import TasksPage from './pages/Tasks';
@@ -86,17 +86,18 @@ const App = () => {
                             <LocalizationProvider dateAdapter={AdapterDateFns}>
                                 <MainNavigation />
                                 <main className="main-content">
-                                    <Switch>
-                                        <Route path="/auth" component={AuthPage} />
-                                        <Route path="/tasks" component={TasksPage} />
-                                        <Route path="/statistics" component={StatisticsPage} />
-                                        <Route path="/settings" component={SettingsPage} />
-                                        <Route path="/confirm/:emailToken" component={ConfirmPage} />
-                                        <Route path="/reset" component={ResetPasswordEmailPage} />
-                                        <Route path="/resetPassword/:emailToken" component={ResetPasswordPage} />
-                                        <Redirect from="/" to="/tasks" exact />
-                                        <Redirect from="/auth" to="/tasks" exact />
-                                    </Switch>
+                                    <Routes>
+                                        <Route path="/auth" element={<AuthPage />} />
+                                        <Route path="/tasks" element={<TasksPage />} />
+                                        <Route path="/statistics" element={<StatisticsPage />} />
+                                        <Route path="/settings" element={<SettingsPage />} />
+                                        <Route path="/confirm/:emailToken" element={<ConfirmPage />} />
+                                        <Route path="/reset" element={<ResetPasswordEmailPage />} />
+                                        <Route path="/resetPassword/:emailToken" element={<ResetPasswordPage />} />
+                                        <Route path="/" element={<Navigate to="/tasks" replace />} />
+                                        {/* In v6, multiple routes matching the same path are not allowed in the same Switch-like way, 
+                                            but Navigate handles the redirect. */}
+                                    </Routes>
                                 </main>
                             </LocalizationProvider>
                         </ThemeProvider>

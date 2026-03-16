@@ -7,6 +7,7 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 
 import React, { useState, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/auth-context';
 import MyDivider from '../components/Social_auth/Divider';
 
@@ -37,6 +38,7 @@ function Copyright() {
 
 const AuthPage = () => {
     const context = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [isLogin, setIsLogin] = useState(true);
     const [showError, setShowError] = useState("");
@@ -129,7 +131,7 @@ const AuthPage = () => {
                         <Grid container justifyContent="center">
                             <Grid size="grow">
                                 <Link 
-                                    onClick={() => window.location.href='/reset'} 
+                                    onClick={() => navigate('/reset')} 
                                     variant="body2" 
                                     sx={{ cursor: 'pointer' }}
                                 >
