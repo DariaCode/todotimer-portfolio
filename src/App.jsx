@@ -35,8 +35,8 @@ const theme = createMuiTheme({
 
 class App extends Component {
     state = {
-        token: null,
-        userId: null,
+        token: 'local',
+        userId: 'local',
         listsOption: null,
         email: null,
     }
@@ -44,35 +44,12 @@ class App extends Component {
     // componentDidMount() executes when the page loads = is invoked immediately
     // after a component is mounted (inserted into the tree).
     componentDidMount() {
-        // To check if there is token in user localStorage and 
-        // not to force user login again.
-        this.refreshToken().then(result => {
-            if (result) {
-                // The user is authenticated
-                let token = JSON.parse(localStorage.getItem("token"));
-                //To extract userId from the token 
-                let base64Url = token.split(".")[1];
-                const base64 = base64Url.replace("-", "+").replace("_", "/");
-                const tokenData = JSON.parse(atob(base64));
-                let userId = tokenData.userId;
-                let email = tokenData.email;
-                this.setState({token: token, userId: userId, email: email});
-            } else {
-                // The user is not authenticated
-                console.log("ComponentDidMount: the user is not authenticated");
-            }
-        })
+        // Local state is already set to 'local' for skipping auth
+        console.log("ComponentDidMount: using local session");
     }
 
     refreshToken = () => {
-        const token = JSON.parse(localStorage.getItem("token"));
-        if (token !== null) {
-            // TO MAKE FUNCTION FOR CHECKING THE TOKEN'S EXPIRATION DATE
-                console.log("refreshToken: access token not expired, nothing to do.");
-                return Promise.resolve(true);
-        }
-        // No tokens found in localStorage
-        return Promise.resolve(false);
+        return Promise.resolve(true);
     };
 
     login = (token, userId, _, email) => {

@@ -32,10 +32,6 @@ const styles = theme => ({
         paddingTop: '64px',
         // paddingLeft: '260px',
         flexDirection: 'column',
-        [theme.breakpoints.down('md')]:{
-            paddingTop: '1px',
-            paddingLeft: '1px',
-        }
     },
     taskView: {
         maxWidth: '60vw',
