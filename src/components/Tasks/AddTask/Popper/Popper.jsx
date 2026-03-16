@@ -1,62 +1,44 @@
 /* ----------------------------------------------------
 React.js / Priority Picker component
 
-Updated: 05/06/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React from 'react';
+import React, { useState } from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import Popper from '@material-ui/core/Popper';
-import Paper from '@material-ui/core/Paper';
+// Material-UI components (https://mui.com/)
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import Popper from '@mui/material/Popper';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+
+// Priority Icons
 import NormalIcon from './PriorityIcons/normal.svg?react';
 import MediumIcon from './PriorityIcons/medium.svg?react';
 import LowIcon from './PriorityIcons/low.svg?react';
 import HighIcon from './PriorityIcons/high.svg?react';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(1),
-  },
-  popper: {
-    // The popper clipped under the dialog during editing task.
-    zIndex: theme.zIndex.modal + 2,
-  },
-}));
-
 // eslint-disable-next-line react/display-name
 const PriorityPopper = React.forwardRef((props, ref) => {
-  const [priority,
-    setPriority] = React.useState('1');
-  const [anchorEl,
-    setAnchorEl] = React.useState(null);
-  const classes = useStyles();
+  const [priority, setPriority] = useState(1);
+  const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
-    setAnchorEl(anchorEl ?
-            null :
-            event.currentTarget);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ?
-        'simple-popper' :
-        undefined;
+  const id = open ? 'simple-popper' : undefined;
 
   const handleChange = (event) => {
-    setPriority(event.target.value);
-    setAnchorEl(anchorEl ?
-            null :
-            event.currentTarget);
+    setPriority(event.currentTarget.getAttribute('value'));
+    setAnchorEl(null);
   };
 
   let currentIcon;
-  switch (priority) {
+  switch (+priority) {
     case 2:
       currentIcon = <LowIcon/>;
       break;
@@ -69,27 +51,41 @@ const PriorityPopper = React.forwardRef((props, ref) => {
     default:
       currentIcon = <NormalIcon/>;
   }
+
   return (
-    <div className="form-control">
+    <Box className="form-control">
       <IconButton
         aria-describedby={id}
         onClick={handleClick}
+        ref={ref}
         value={priority}
-        ref={ref}>
+      >
         {currentIcon}
       </IconButton>
-      <Popper id={id} open={open} anchorEl={anchorEl} className={classes.popper}>
-        <Paper>
-          <div className={classes.root}>
-            <MenuItem value={1} onClick={handleChange}><NormalIcon/>Normal
+      <Popper 
+        id={id} 
+        open={open} 
+        anchorEl={anchorEl} 
+        sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
+      >
+        <Paper elevation={3}>
+          <Box sx={{ padding: 1 }}>
+            <MenuItem value={1} onClick={handleChange} sx={{ gap: 1 }}>
+              <NormalIcon/> Normal
             </MenuItem>
-            <MenuItem value={2} onClick={handleChange}><LowIcon/>Low</MenuItem>
-            <MenuItem value={3} onClick={handleChange}><MediumIcon/>Medium</MenuItem>
-            <MenuItem value={4} onClick={handleChange}><HighIcon/>High</MenuItem>
-          </div>
+            <MenuItem value={2} onClick={handleChange} sx={{ gap: 1 }}>
+              <LowIcon/> Low
+            </MenuItem>
+            <MenuItem value={3} onClick={handleChange} sx={{ gap: 1 }}>
+              <MediumIcon/> Medium
+            </MenuItem>
+            <MenuItem value={4} onClick={handleChange} sx={{ gap: 1 }}>
+              <HighIcon/> High
+            </MenuItem>
+          </Box>
         </Paper>
       </Popper>
-    </div>
+    </Box>
   );
 });
 

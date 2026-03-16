@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
 React.js / Tasks page component
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
@@ -9,53 +9,53 @@ Website: www.dariacode.dev
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import AuthContext from '../context/auth-context';
 
-
-// Material-UI components (https://material-ui.com/)
-import { withStyles } from '@material-ui/core/styles';
-import Modal from '../components/Modal/EditTaskModal';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
+// Material-UI components (https://mui.com/)
+import { styled } from '@mui/material/styles';
+import EditTaskModal from '../components/Modal/EditTaskModal';
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
 import Lists from '../components/Tasks/TaskList/Lists'
 import AddTask from '../components/Tasks/AddTask/AddTask';
 import PriorityPopper from '../components/Tasks/AddTask/Popper/Popper';
 import DatePicker from '../components/Tasks/AddTask/Pickers/DatePicker';
 import RepeatTask from '../components/Tasks/AddTask/Repeat/Repeat'
-import TextField from '@material-ui/core/TextField';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
+import TextField from '@mui/material/TextField';
+import CircularProgress from '@mui/material/CircularProgress';
+import IconButton from '@mui/material/IconButton';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Box from '@mui/material/Box';
 
-// Style for Material-UI components
-const styles = theme => ({
-    root: {
-        display: 'flex',
-        paddingTop: '64px',
-        flexDirection: 'column',
-    },
-    taskView: {
-        maxWidth: '60vw',
-        padding: theme.spacing(3, 1),
-        [theme.breakpoints.down('md')]: {
-            maxWidth: '100vw',
-        },
-    },
-    addTaskIcons: {
-        display: 'flex',
-        flexDirection: 'row',
-    },
-    spinner: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: theme.spacing(10),
-    },
-    taskEdit: {
-        display: 'flex',
-    },
-});
+const RootBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    paddingTop: '64px',
+    flexDirection: 'column',
+}));
 
-const TasksPage = (props) => {
-    const { classes } = props;
+const TaskViewBox = styled(Box)(({ theme }) => ({
+    maxWidth: '60vw',
+    padding: theme.spacing(3, 1),
+    [theme.breakpoints.down('md')]: {
+        maxWidth: '100vw',
+    },
+}));
+
+const AddTaskIconsBox = styled('form')(({ theme }) => ({
+    display: 'flex',
+    flexDirection: 'row',
+}));
+
+const SpinnerBox = styled(Box)(({ theme }) => ({
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: theme.spacing(10),
+}));
+
+const TaskEditBox = styled('form')(({ theme }) => ({
+    display: 'flex',
+}));
+
+const TasksPage = () => {
     const context = useContext(AuthContext);
 
     const [creating, setCreating] = useState(false);
@@ -97,18 +97,18 @@ const TasksPage = (props) => {
         const title = titleElRef.current.value;
         const priority = +priorityElRef.current.value;
         let date = dateElRef.current.value;
-        let dateRepeat = dateRepeatElRef.current.value.split(",");
+        let dateRepeatData = dateRepeatElRef.current.value.split(",");
         
         let start = null;
         let end = null;
         let intervalK = null;
         let intervalN = null;
 
-        if (dateRepeat.length > 1) {
-            start = new Date(dateRepeat[0]).toISOString();
-            end = new Date(dateRepeat[1]).toISOString();
-            intervalK = parseInt(dateRepeat[2]);
-            intervalN = dateRepeat[3];
+        if (dateRepeatData.length > 1) {
+            start = new Date(dateRepeatData[0]).toISOString();
+            end = new Date(dateRepeatData[1]).toISOString();
+            intervalK = parseInt(dateRepeatData[2]);
+            intervalN = dateRepeatData[3];
             date = start;
         }
 
@@ -158,18 +158,18 @@ const TasksPage = (props) => {
         const title = titleElRef.current.value;
         const priority = +priorityElRef.current.value;
         let date = dateElRef.current.value;
-        let dateRepeat = dateRepeatElRef.current.value.split(",");
+        let dateRepeatData = dateRepeatElRef.current.value.split(",");
         
         let start = null;
         let end = null;
         let intervalK = null;
         let intervalN = null;
 
-        if (dateRepeat.length > 1) {
-            start = new Date(dateRepeat[0]).toISOString();
-            end = new Date(dateRepeat[1]).toISOString();
-            intervalK = parseInt(dateRepeat[2]);
-            intervalN = dateRepeat[3];
+        if (dateRepeatData.length > 1) {
+            start = new Date(dateRepeatData[0]).toISOString();
+            end = new Date(dateRepeatData[1]).toISOString();
+            intervalK = parseInt(dateRepeatData[2]);
+            intervalN = dateRepeatData[3];
             date = start;
         }
 
@@ -240,10 +240,10 @@ const TasksPage = (props) => {
 
     return (
         <React.Fragment>
-            <div className={classes.root}>
+            <RootBox>
                 <CssBaseline />
                 <Container maxWidth="sm">
-                    <div className={classes.taskView}>
+                    <TaskViewBox>
                         <TextField
                             id="outlined-basic"
                             label="Add task"
@@ -257,34 +257,34 @@ const TasksPage = (props) => {
                         {creating && <AddTask
                             onCancel={modalCancelHandler}
                             onConfirm={modalConfirmHandler}>
-                            <form className={classes.addTaskIcons}>
+                            <AddTaskIconsBox>
                                 <PriorityPopper ref={priorityElRef} />
                                 <DatePicker ref={dateElRef} />
                                 <RepeatTask ref={dateRepeatElRef} />
-                            </form>
+                            </AddTaskIconsBox>
                         </AddTask>}
 
                         {isLoading
-                            ? <div className={classes.spinner}>
+                            ? <SpinnerBox>
                                 <CircularProgress
                                     color="secondary" />
-                            </div>
+                            </SpinnerBox>
                             : <Lists
                                 tasks={tasks}
                                 authUserIdMain={context.userId}
-                                onViewDetailMain={() => {}} // Placeholder if needed
+                                onViewDetailMain={() => {}} 
                                 onDeleteTaskMain={deleteTaskHandler}
                                 onEditTaskMain={startEditTaskHandler}
                                 onCompleteTaskMain={completeTaskHandler} />
                         }
-                    </div>
+                    </TaskViewBox>
                 </Container>
 
-                {updating && <Modal
+                {updating && <EditTaskModal
                     onCancel={modalCancelHandler}
                     onConfirm={editTaskHandler}
                     confirmText="confirm">
-                    <form className={classes.taskEdit}>
+                    <TaskEditBox>
                         <TextField
                             id="outlined-basic-edit"
                             label="Edit task"
@@ -296,16 +296,16 @@ const TasksPage = (props) => {
                         <PriorityPopper ref={priorityElRef} />
                         <DatePicker ref={dateElRef} />
                         <RepeatTask ref={dateRepeatElRef} />
-                        <div>
+                        <Box>
                             <IconButton onClick={() => deleteTaskHandler(updatedTask)}>
                                 <DeleteOutlineIcon color="secondary" />
                             </IconButton>
-                        </div>
-                    </form>
-                </Modal>}
-            </div>
+                        </Box>
+                    </TaskEditBox>
+                </EditTaskModal>}
+            </RootBox>
         </React.Fragment>
     );
 };
 
-export default withStyles(styles)(TasksPage);
+export default TasksPage;

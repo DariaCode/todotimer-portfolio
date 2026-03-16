@@ -1,135 +1,61 @@
 /* ----------------------------------------------------
 React.js / Repeat Task component
 
-Updated: 05/06/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import 'date-fns';
-import React from 'react';
+import React, { useState } from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Popper from '@material-ui/core/Popper';
-import Paper from '@material-ui/core/Paper';
-import DateFnsUtils from '@date-io/date-fns';
-import {MuiPickersUtilsProvider, KeyboardDatePicker} from '@material-ui/pickers';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import LoopIcon from '@material-ui/icons/Loop';
+// Material-UI components (https://mui.com/)
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Popper from '@mui/material/Popper';
+import Paper from '@mui/material/Paper';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Box from '@mui/material/Box';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  popper: {
-    // The popper clipped under the dialog during editing task.
-    zIndex: theme.zIndex.modal,
-  },
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(1),
-  },
-  picker: {
-    margin: theme.spacing(0.5),
-  },
-  buttonBox: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-  },
-  button: {
-    margin: theme.spacing(0.4),
-    minWidth: 121,
-  },
-  title: {
-    padding: theme.spacing(0.5),
-  },
-  number: {
-    maxWidth: 121,
-    margin: theme.spacing(0.5),
-  },
-  formControl: {
-    margin: theme.spacing(0.5),
-    minWidth: 121,
-  },
-}));
+// Icons
+import LoopIcon from '@mui/icons-material/Loop';
 
-// eslint-disable-next-line react/display-name
-const repeatTask = React.forwardRef((props, ref) => {
-  const [selectedStartDate,
-    setSelectedStartDate] = React.useState(new Date().toISOString());
-  const [selectedEndDate,
-    setSelectedEndDate] = React.useState(new Date().toISOString());
-  const [anchorEl,
-    setAnchorEl] = React.useState(null);
-  const [dateArray,
-    setDateArray] = React.useState();
-  console.log(dateArray);
-  const [frequencyK,
-    setFrequencyK] = React.useState(1);
-  const [frequencyN,
-    setFrequencyN] = React.useState();
-  const [custom,
-    setCustom] = React.useState(false);
-  const classes = useStyles();
-
+const RepeatTask = React.forwardRef((props, ref) => {
+  const [selectedStartDate, setSelectedStartDate] = useState(new Date().toISOString());
+  const [selectedEndDate, setSelectedEndDate] = useState(new Date().toISOString());
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [dateArray, setDateArray] = useState();
+  const [frequencyK, setFrequencyK] = useState(1);
+  const [frequencyN, setFrequencyN] = useState('day');
+  const [custom, setCustom] = useState(false);
 
   const handleClick = (event) => {
-    setAnchorEl(anchorEl ?
-            null :
-            event.currentTarget);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ?
-        'repeat-popper' :
-        undefined;
+  const id = open ? 'repeat-popper' : undefined;
 
   const handleStartDateChange = (date) => {
-    const formatDate = new Date(date).toISOString();
-    setSelectedStartDate(formatDate);
+    if (date) {
+        setSelectedStartDate(new Date(date).toISOString());
+    }
   };
 
   const handleEndDateChange = (date) => {
-    const formatDate = new Date(date).toISOString();
-    setSelectedEndDate(formatDate);
+    if (date) {
+        setSelectedEndDate(new Date(date).toISOString());
+    }
   };
 
-  const handleDaily = (date) => {
-    const dateArr = [selectedStartDate, selectedEndDate, 1, 'day'];
+  const handleQuickRepeat = (unit) => {
+    const dateArr = [selectedStartDate, selectedEndDate, 1, unit];
     setDateArray(dateArr);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
-  };
-
-  const handleWeekly = (date) => {
-    const dateArr = [selectedStartDate, selectedEndDate, 1, 'week'];
-    setDateArray(dateArr);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
-  };
-
-  const handleMonthly = (date) => {
-    const dateArr = [selectedStartDate, selectedEndDate, 1, 'month'];
-    setDateArray(dateArr);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
-  };
-
-  const handleYearly = (date) => {
-    const dateArr = [selectedStartDate, selectedEndDate, 1, 'year'];
-    setDateArray(dateArr);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
+    setAnchorEl(null);
   };
 
   const handleCustom = () => {
@@ -138,7 +64,7 @@ const repeatTask = React.forwardRef((props, ref) => {
 
   const handleFrequencyK = (event) => {
     setDateArray([]);
-    setFrequencyK( parseInt(event.target.value));
+    setFrequencyK(parseInt(event.target.value));
   };
 
   const handleFrequencyN = (event) => {
@@ -146,158 +72,110 @@ const repeatTask = React.forwardRef((props, ref) => {
     setFrequencyN(event.target.value);
   };
 
-  const handleClear = (date) => {
-    setSelectedStartDate(undefined);
-    setSelectedEndDate(undefined);
-    setDateArray([]);
+  const handleClear = () => {
+    setSelectedStartDate(new Date().toISOString());
+    setSelectedEndDate(new Date().toISOString());
+    setDateArray(undefined);
     setFrequencyK(1);
-    setFrequencyN(undefined);
+    setFrequencyN('day');
     setCustom(false);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
+    setAnchorEl(null);
   };
-  const handleOk = (date) => {
+
+  const handleOk = () => {
     const dateArr = [selectedStartDate, selectedEndDate, frequencyK, frequencyN];
-    console.log('new dateArray:', dateArr, typeof dateArray.length);
     setDateArray(dateArr);
     setCustom(false);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
+    setAnchorEl(null);
   };
 
   return (
-    <div>
+    <Box sx={{ display: 'inline-block' }}>
       <IconButton
         aria-describedby={id}
         onClick={handleClick}
+        ref={ref}
         value={dateArray}
-        ref={ref}>
-        {dateArray? <LoopIcon color="primary" />: <LoopIcon />}
+      >
+        <LoopIcon color={dateArray ? "primary" : "inherit"} />
       </IconButton>
-      <Popper id={id} open={open} anchorEl={anchorEl} className={classes.popper}>
-        <Paper>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <div className={classes.root}>
-              <KeyboardDatePicker
-                className={classes.picker}
-                autoOk
-                variant="inline"
-                inputVariant="outlined"
+      <Popper 
+        id={id} 
+        open={open} 
+        anchorEl={anchorEl} 
+        sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
+      >
+        <Paper elevation={3}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 1, gap: 1 }}>
+              <DatePicker
                 label="Start"
-                format="MM/dd/yyyy"
-                margin="normal"
-                value={selectedStartDate}
-                InputAdornmentProps={{
-                  position: 'start',
-                }}
-                KeyboardButtonProps={{
-                  'aria-label': 'change date',
-                }}
-                onChange={(date) => handleStartDateChange(date)}/>
-              <KeyboardDatePicker
-                className={classes.picker}
-                autoOk
-                variant="inline"
-                inputVariant="outlined"
+                value={new Date(selectedStartDate)}
+                onChange={handleStartDateChange}
+                slotProps={{ textField: { variant: 'outlined', fullWidth: true } }}
+              />
+              <DatePicker
                 label="End by"
-                format="MM/dd/yyyy"
-                value={selectedEndDate}
-                InputAdornmentProps={{
-                  position: 'start',
-                }}
-                onChange={(date) => handleEndDateChange(date)}/>
-              <div className={classes.buttonBox}>
-                <Button
-                  className={classes.button}
-                  variant="outlined"
-                  onClick={handleDaily}
-                  color="primary">
+                value={new Date(selectedEndDate)}
+                onChange={handleEndDateChange}
+                slotProps={{ textField: { variant: 'outlined', fullWidth: true } }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
+                <Button variant="outlined" onClick={() => handleQuickRepeat('day')} color="primary" sx={{ minWidth: 121 }}>
                   Daily
                 </Button>
-                <Button
-                  className={classes.button}
-                  variant="outlined"
-                  onClick={handleWeekly}
-                  color="primary">
+                <Button variant="outlined" onClick={() => handleQuickRepeat('week')} color="primary" sx={{ minWidth: 121 }}>
                   Weekly
                 </Button>
-              </div>
-              <div className={classes.buttonBox}>
-                <Button
-                  className={classes.button}
-                  variant="outlined"
-                  onClick={handleMonthly}
-                  color="primary">
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
+                <Button variant="outlined" onClick={() => handleQuickRepeat('month')} color="primary" sx={{ minWidth: 121 }}>
                   Monthly
                 </Button>
-                <Button
-                  className={classes.button}
-                  variant="outlined"
-                  onClick={handleYearly}
-                  color="primary">
+                <Button variant="outlined" onClick={() => handleQuickRepeat('year')} color="primary" sx={{ minWidth: 121 }}>
                   Yearly
                 </Button>
-              </div>
-              <Button
-                className={classes.button}
-                variant="outlined"
-                onClick={handleCustom}
-                color="primary">
+              </Box>
+              <Button variant="outlined" onClick={handleCustom} color="primary" sx={{ minWidth: 121 }}>
                   Set Custom
               </Button>
-              {custom && <div className={classes.customButton}>
-                <TextField
-                  className={classes.number}
-                  id="outlined-number"
-                  label="Every"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  defaultValue={frequencyK}
-                  onClick
-                    ={handleFrequencyK}
-                  variant="outlined"/>
-                <FormControl variant="outlined" className={classes.formControl}>
-                  <InputLabel id="select-outlined-label">Set Repeat</InputLabel>
-                  <Select
-                    labelId="select-outlined-label"
-                    id="select-outlined"
-                    value={frequencyN}
-                    onChange={handleFrequencyN}
-                    label="Set Repeat"
-                    variant="outlined">
-                    <MenuItem value={'day'}>Day</MenuItem>
-                    <MenuItem value={'week'}>Week</MenuItem>
-                    <MenuItem value={'month'}>Month</MenuItem>
-                    <MenuItem value={'year'}>Year</MenuItem>
-                  </Select>
-                </FormControl>
-              </div>}
-              <div className={classes.buttonBox}>
-                <Button
-                  className={classes.button}
-                  onClick={handleOk}
-                  variant="contained"
-                  color="primary">
+              {custom && (
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                    <TextField
+                      label="Every"
+                      type="number"
+                      value={frequencyK}
+                      onChange={handleFrequencyK}
+                      variant="outlined"
+                      sx={{ maxWidth: 121 }}
+                    />
+                    <FormControl variant="outlined" sx={{ minWidth: 121 }}>
+                      <InputLabel>Set Repeat</InputLabel>
+                      <Select
+                        value={frequencyN}
+                        onChange={handleFrequencyN}
+                        label="Set Repeat"
+                      >
+                        <MenuItem value={'day'}>Day</MenuItem>
+                        <MenuItem value={'week'}>Week</MenuItem>
+                        <MenuItem value={'month'}>Month</MenuItem>
+                        <MenuItem value={'year'}>Year</MenuItem>
+                      </Select>
+                    </FormControl>
+                </Box>
+              )}
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
+                <Button onClick={handleOk} variant="contained" color="primary" sx={{ minWidth: 121 }}>
                   Ok
                 </Button>
-                <Button
-                  className={classes.button}
-                  onClick={handleClear}
-                  variant="outlined"
-                  color="secondary">
+                <Button onClick={handleClear} variant="outlined" color="secondary" sx={{ minWidth: 121 }}>
                   Clear
                 </Button>
-              </div>
-            </div>
-          </MuiPickersUtilsProvider>
+              </Box>
+            </Box>
         </Paper>
       </Popper>
-    </div>
+    </Box>
   );
 });
 
-export default repeatTask;
+export default RepeatTask;

@@ -1,56 +1,33 @@
 /* ----------------------------------------------------
 React.js / Task Item component
 
-Updated: 05/06/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React from 'react';
+import React, { useState } from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import ListItem from '@material-ui/core/ListItem';
-import Card from '@material-ui/core/Card';
-import Typography from '@material-ui/core/Typography';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import LoopIcon from '@material-ui/icons/Loop';
-import {green, yellow} from '@material-ui/core/colors';
+// Material-UI components (https://mui.com/)
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import ListItem from '@mui/material/ListItem';
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: theme.spacing(0.3),
-    marginBottom: theme.spacing(0.3),
-    flexGrow: 1,
-    // minWidth: '100%',
-  },
-  repeat: {
-    padding: theme.spacing(0.1),
-  },
-  list: {
-    padding: theme.spacing(0),
-  },
-  menuIcon: {
-    margin: theme.spacing(0, 1.5, 0, 0),
-  },
-}));
+// Icons
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import LoopIcon from '@mui/icons-material/Loop';
+import { green, yellow } from '@mui/material/colors';
 
-// eslint-disable-next-line require-jsdoc
 export default function TaskItem(props) {
-  const [anchorEl,
-    setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
-  const classes = useStyles();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -65,10 +42,10 @@ export default function TaskItem(props) {
   let currentIcon;
   switch (priority) {
     case 2:
-      currentIcon = <RadioButtonUncheckedIcon style={{color: green[500]}} />;
+      currentIcon = <RadioButtonUncheckedIcon sx={{ color: green[500] }} />;
       break;
     case 3:
-      currentIcon = <RadioButtonUncheckedIcon style={{color: yellow[500]}} />;
+      currentIcon = <RadioButtonUncheckedIcon sx={{ color: yellow[500] }} />;
       break;
     case 4:
       currentIcon = <RadioButtonUncheckedIcon color="secondary" />;
@@ -77,47 +54,49 @@ export default function TaskItem(props) {
       currentIcon = <RadioButtonUncheckedIcon color="action" />;
   };
 
-  // To change dates to local time zone.
   const options = {
-    // weekday: 'short',
-    // year: 'numeric',
     month: 'short',
     day: 'numeric',
   };
   const formatedDate = new Date(props.date).toLocaleDateString('en', options);
 
   return (
-    <ListItem key={props.taskId} className={classes.list}>
-      <Card className={classes.root} variant="outlined">
-        <div>
-          <IconButton
-            onClick={props
-                .onComplete
-                .bind(this, props.taskId)}>
+    <ListItem key={props.taskId} disablePadding sx={{ padding: 0 }}>
+      <Card 
+        variant="outlined"
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          mt: 0.3,
+          mb: 0.3,
+          flexGrow: 1,
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton onClick={() => props.onComplete(props.taskId)}>
             {props.complete ?
-              <CheckCircleIcon
-                style={{color: green[500]}} /> :
+              <CheckCircleIcon sx={{ color: green[500] }} /> :
               currentIcon}
           </IconButton>
-          <Typography
-            display='inline'>
+          <Typography sx={{ display: 'inline' }}>
             {props.title}
           </Typography>
-        </div>
-        <div>
-          {props.repeat !== null?
-             <IconButton
-               disabled>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {props.repeat !== null && (
+             <IconButton disabled>
                <LoopIcon
-                 className={classes.repeat}
                  color="action"
-                 fontSize="small" />
-             </IconButton>: ''}
-          {props.date !== null ?
-          <Typography
-            display='inline'>
-            {formatedDate}
-          </Typography> :''}
+                 fontSize="small"
+                 sx={{ padding: 0.1 }}
+               />
+             </IconButton>
+          )}
+          {props.date !== null && (
+            <Typography sx={{ display: 'inline' }}>
+              {formatedDate}
+            </Typography>
+          )}
           <IconButton
             aria-label="more"
             aria-controls="long-menu"
@@ -132,33 +111,35 @@ export default function TaskItem(props) {
             open={open}
             onClose={handleClose}
             PaperProps={{
-              style: {
+              sx: {
                 maxHeight: 46 * 4.5,
                 width: '15ch',
               },
             }}>
             <MenuItem
               key="edit"
-              onClick={props
-                  .onEdit
-                  .bind(this, props.taskId)}>
+              onClick={() => {
+                handleClose();
+                props.onEdit(props.taskId);
+              }}>
               <EditOutlinedIcon
-                className={classes.menuIcon}
+                sx={{ mr: 1.5 }}
                 color="action"/>
-            Edit
+              Edit
             </MenuItem>
             <MenuItem
               key="delete"
-              onClick={props
-                  .onDelete
-                  .bind(this, props.taskId)}>
+              onClick={() => {
+                handleClose();
+                props.onDelete(props.taskId);
+              }}>
               <DeleteOutlineIcon
-                className={classes.menuIcon}
+                sx={{ mr: 1.5 }}
                 color="action"/>
-            Delete
+              Delete
             </MenuItem>
           </Menu>
-        </div>
+        </Box>
       </Card>
     </ListItem>
   );

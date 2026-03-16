@@ -1,59 +1,46 @@
 /* ----------------------------------------------------
 React.js / Add task component
 
-Updated: 05/05/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+// Material-UI components (https://mui.com/)
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  button: {
-    minWidth: '128px',
-    margin: theme.spacing(1),
-  },
-}));
+// Icons
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 
-// eslint-disable-next-line require-jsdoc
 export default function AddTask(props) {
-  const classes = useStyles();
   return (
-    <div className={classes.root}>
-      <Grid>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Box>
         <Button
-          className={classes.button}
           variant="contained"
           color="primary"
           onClick={props.onConfirm}
           startIcon={<AddCircleOutlineIcon />}
+          sx={{ minWidth: '128px', margin: 1 }}
         >
         Add Task
         </Button>
         <Button
-          className={classes.button}
           variant="outlined"
           color="secondary"
           onClick={props.onCancel}
           startIcon={<HighlightOffIcon />}
+          sx={{ minWidth: '128px', margin: 1 }}
         >
         Cancel
         </Button>
-      </Grid>
-      <Grid>
+      </Box>
+      <Box>
         {props.children}
-      </Grid>
-    </div>
+      </Box>
+    </Box>
   );
 };

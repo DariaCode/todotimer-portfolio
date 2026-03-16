@@ -1,33 +1,23 @@
 /* ----------------------------------------------------
 React.js / Statistics overview component
 
-Updated: 05/10/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
+// Material-UI components (https://mui.com/)
+import Grid from '@mui/material/Grid2';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  overview: {
-    padding: theme.spacing(0.5, 0),
-  },
-}));
-
-// eslint-disable-next-line require-jsdoc
 export default function Overview(props) {
-  const classes = useStyles();
-
   return (
-    <div>
-      <Grid container>
-        <Grid item sm={6} md={6} lg={6} className={classes.overview}>
+    <Box>
+      <Grid container spacing={2}>
+        <Grid size={{ sm: 6, md: 6, lg: 6 }} sx={{ padding: (theme) => theme.spacing(0.5, 0) }}>
           <Typography
             component="h2"
             variant="h4"
@@ -39,14 +29,14 @@ export default function Overview(props) {
           <Typography
             component="h2"
             variant="h6"
-            color="disabled"
+            color="text.disabled"
             align="center"
             gutterBottom>
           Complete
           </Typography>
           <Divider variant="middle"/>
         </Grid>
-        <Grid item sm={6} md={6} lg={6} className={classes.overview}>
+        <Grid size={{ sm: 6, md: 6, lg: 6 }} sx={{ padding: (theme) => theme.spacing(0.5, 0) }}>
           <Typography
             component="h2"
             variant="h4"
@@ -58,14 +48,14 @@ export default function Overview(props) {
           <Typography
             component="h2"
             variant="h6"
-            color="disabled"
+            color="text.disabled"
             align="center"
             gutterBottom>
           Incomplete
           </Typography>
           <Divider variant="middle"/>
         </Grid>
-        <Grid item sm={6} md={6} lg={6} className={classes.overview}>
+        <Grid size={{ sm: 6, md: 6, lg: 6 }} sx={{ padding: (theme) => theme.spacing(0.5, 0) }}>
           <Typography
             component="h2"
             variant="h4"
@@ -77,13 +67,13 @@ export default function Overview(props) {
           <Typography
             component="h2"
             variant="h6"
-            color="disabled"
+            color="text.disabled"
             align="center"
             gutterBottom>
           Overdue
           </Typography>
         </Grid>
-        <Grid item sm={6} md={6} lg={6} className={classes.overview}>
+        <Grid size={{ sm: 6, md: 6, lg: 6 }} sx={{ padding: (theme) => theme.spacing(0.5, 0) }}>
           <Typography
             component="h2"
             variant="h4"
@@ -95,12 +85,12 @@ export default function Overview(props) {
           <Typography
             component="h2"
             variant="h6"
-            color="disabled"
+            color="text.disabled"
             align="center"
             gutterBottom>
           Total
           </Typography>
         </Grid>
       </Grid>
-    </div>);
+    </Box>);
 }

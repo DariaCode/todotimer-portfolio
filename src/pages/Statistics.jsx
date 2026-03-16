@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
 React.js / Statistics page component
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
@@ -15,42 +15,18 @@ import AreaChart from "../components/Statistics/AreaChart";
 // (http://recharts.org/).
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
 
-// Material-UI components (https://material-ui.com/).
-import { withStyles } from "@material-ui/core/styles";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-
-// Style for Material-UI components
-const styles = theme => ({
-  root: {
-    display: "flex",
-    paddingTop: "84px",
-    paddingLeft: "220px",
-    flexDirection: "column",
-    [theme.breakpoints.down("md")]: {
-      paddingTop: "1px",
-      paddingLeft: "1px"
-    }
-  },
-  paper: {
-    padding: theme.spacing(1.5)
-  },
-  spinner: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: theme.spacing(10)
-  }
-});
+// Material-UI components (https://mui.com/).
+import CircularProgress from "@mui/material/CircularProgress";
+import CssBaseline from "@mui/material/CssBaseline";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import Grid from "@mui/material/Grid2";
+import Paper from "@mui/material/Paper";
+import Box from "@mui/material/Box";
 
 const COLORS = ["#82b5f2", "#fd76a2"];
 
-const StatisticsPage = (props) => {
-  const { classes } = props;
+const StatisticsPage = () => {
   const [tasks, setTasks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [stats, setStats] = useState({
@@ -63,8 +39,6 @@ const StatisticsPage = (props) => {
   useEffect(() => {
     const fetchTasks = () => {
       setIsLoading(true);
-      
-      // Using localStorage instead of GraphQL fetch for the "local" standalone mode
       const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
       
       const processedTasks = savedTasks.map(task => {
@@ -97,41 +71,35 @@ const StatisticsPage = (props) => {
   }, []);
 
   const pieData = [
-    {
-      name: "Complete",
-      value: stats.complete
-    },
-    {
-      name: "Incomplete",
-      value: stats.incomplete
-    }
+    { name: "Complete", value: stats.complete },
+    { name: "Incomplete", value: stats.incomplete }
   ];
 
   return (
-    <div className={classes.root}>
+    <Box sx={{ 
+        display: "flex", 
+        paddingTop: { xs: "1px", md: "84px" }, 
+        paddingLeft: { xs: "1px", md: "220px" }, 
+        flexDirection: "column" 
+    }}>
       <CssBaseline />
       <Container maxWidth="md">
         <Typography component="h1" variant="h4" color="primary" gutterBottom>
           Statistics
         </Typography>
         {isLoading ? (
-          <div className={classes.spinner}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: 10 }}>
             <CircularProgress color="secondary" />
-          </div>
+          </Box>
         ) : (
           <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <Paper className={classes.paper}>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  color="primary"
-                  gutterBottom
-                >
+            <Grid size={12}>
+              <Paper sx={{ padding: 1.5 }}>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Overview
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid md={6} item xs={12} lg={6}>
+                  <Grid size={{ xs: 12, md: 6, lg: 6 }}>
                     <Overview
                       complete={stats.complete}
                       incomplete={stats.incomplete}
@@ -139,7 +107,7 @@ const StatisticsPage = (props) => {
                       total={stats.total}
                     />
                   </Grid>
-                  <Grid md={6} item xs={12} lg={6}>
+                  <Grid size={{ xs: 12, md: 6, lg: 6 }}>
                     <ResponsiveContainer width="100%" height={240}>
                       <PieChart>
                         <Pie
@@ -162,27 +130,17 @@ const StatisticsPage = (props) => {
                 </Grid>
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <Paper className={classes.paper}>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  color="primary"
-                  gutterBottom
-                >
+            <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+              <Paper sx={{ padding: 1.5 }}>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Week Completion Rate
                 </Typography>
                 <BarChart tasks={tasks} />
               </Paper>
             </Grid>
-            <Grid item xs={12} md={6} lg={6}>
-              <Paper className={classes.paper}>
-                <Typography
-                  component="h2"
-                  variant="h6"
-                  color="primary"
-                  gutterBottom
-                >
+            <Grid size={{ xs: 12, md: 6, lg: 6 }}>
+              <Paper sx={{ padding: 1.5 }}>
+                <Typography component="h2" variant="h6" color="primary" gutterBottom>
                   Week Completion Curve
                 </Typography>
                 <AreaChart tasks={tasks} />
@@ -191,8 +149,8 @@ const StatisticsPage = (props) => {
           </Grid>
         )}
       </Container>
-    </div>
+    </Box>
   );
 };
 
-export default withStyles(styles)(StatisticsPage);
+export default StatisticsPage;

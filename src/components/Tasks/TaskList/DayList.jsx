@@ -1,37 +1,22 @@
 /* ----------------------------------------------------
 React.js / Day List component
 
-Updated: 05/08/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
 import TaskItem from './TaskItem';
-import {todayLocalDate,
-  tomorrowLocalDate} from '../../../dateHelpers/dateHelpers';
+import { todayLocalDate, tomorrowLocalDate } from '../../../dateHelpers/dateHelpers';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
+// Material-UI components (https://mui.com/)
+import Typography from '@mui/material/Typography';
+import List from '@mui/material/List';
+import Divider from '@mui/material/Divider';
+import Box from '@mui/material/Box';
 
-
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    padding: theme.spacing(1),
-  },
-  title: {
-    padding: theme.spacing(2, 1, 1, 1),
-    color: 'action',
-  },
-}));
-
-// eslint-disable-next-line require-jsdoc
 export default function DayLists(props) {
-  const classes = useStyles();
   const list = props.tasks.map((task) => {
     return (
       <TaskItem key={task._id}
@@ -52,7 +37,6 @@ export default function DayLists(props) {
 
   const options = {
     weekday: 'short',
-    // year: 'numeric',
     month: 'short',
     day: 'numeric',
   };
@@ -82,13 +66,13 @@ export default function DayLists(props) {
   };
 
   return (
-    <div>
-      <List key="DayList" className={classes.root}>
-        <Typography className={classes.title}>
+    <Box>
+      <List key="DayList" sx={{ padding: 1 }}>
+        <Typography sx={{ padding: (theme) => theme.spacing(2, 1, 1, 1), color: 'text.secondary' }}>
           {listTitle}
         </Typography>
         {list}
       </List>
       <Divider />
-    </div>);
+    </Box>);
 };

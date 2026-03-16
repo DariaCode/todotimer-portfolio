@@ -1,32 +1,31 @@
 /* ----------------------------------------------------
 React.js / Auth component
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
 import React, { useState, useRef, useContext } from 'react';
-import PropTypes from 'prop-types';
 import AuthContext from '../context/auth-context';
 import MyDivider from '../components/Social_auth/Divider';
 
-// Material-UI components (https://material-ui.com/)
-import Typography from '@material-ui/core/Typography';
-import Link from '@material-ui/core/Link';
-import { withStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Avatar from '@material-ui/core/Avatar';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import TextField from '@material-ui/core/TextField';
-import Button from '@material-ui/core/Button';
-import Grid from '@material-ui/core/Grid';
-import Alert from '@material-ui/lab/Alert';
+// Material-UI components (https://mui.com/)
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Container from '@mui/material/Container';
+import CssBaseline from '@mui/material/CssBaseline';
+import Avatar from '@mui/material/Avatar';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Grid from '@mui/material/Grid2';
+import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 
 function Copyright() {
     return (
-        <Typography variant="body2" color="textSecondary" align="center">
+        <Typography variant="body2" color="text.secondary" align="center">
             {'Copyright © '}
             <Link color="inherit" href="https://dariacode.dev/">
                 DariaCode
@@ -36,42 +35,7 @@ function Copyright() {
     );
 }
 
-// Style for Material-UI components
-const styles = (theme) => ({
-    root: {
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '92vh'
-    },
-    paper: {
-        marginTop: theme.spacing(14),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-    },
-    avatar: {
-        margin: theme.spacing(1),
-        backgroundColor: theme.palette.secondary.main
-    },
-    form: {
-        width: '100%',
-        marginTop: theme.spacing(1)
-    },
-    submit: {
-        margin: theme.spacing(3, 0, 2)
-    },
-    switch: {
-        alignItems: 'center',
-        cursor: 'pointer'
-    },
-    footer: {
-        padding: theme.spacing(3, 2),
-        marginTop: 'auto'
-    }
-});
-
-const AuthPage = (props) => {
-    const { classes } = props;
+const AuthPage = () => {
     const context = useContext(AuthContext);
 
     const [isLogin, setIsLogin] = useState(true);
@@ -94,23 +58,30 @@ const AuthPage = (props) => {
 
         // Mocking login for standalone local mode
         console.log(`${isLogin ? 'Login' : 'Signup'} requested for: ${email}`);
-        
-        // Always succeed with a local token in this mode
         context.login('local', 'local', 3600, email);
     };
 
     return (
-        <div className={classes.root}>
+        <Box sx={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            minHeight: '92vh' 
+        }}>
             <CssBaseline />
             <Container component="main" maxWidth="xs">
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
+                <Box sx={{ 
+                    marginTop: 14, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center' 
+                }}>
+                    <Avatar sx={{ margin: 1, backgroundColor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         {isLogin ? "Login" : "Signup"}
                     </Typography>
-                    <form className={classes.form} onSubmit={submitHandler}>
+                    <Box component="form" sx={{ width: '100%', marginTop: 1 }} onSubmit={submitHandler}>
                         <TextField
                             variant="outlined"
                             margin="normal"
@@ -135,7 +106,7 @@ const AuthPage = (props) => {
                             inputRef={passwordEl} />
 
                         {showError && (
-                            <Alert severity="error">
+                            <Alert severity="error" sx={{ mt: 1 }}>
                                 {showError}
                             </Alert>
                         )}
@@ -145,25 +116,29 @@ const AuthPage = (props) => {
                             fullWidth
                             variant="contained"
                             color="primary"
-                            className={classes.submit}>
+                            sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}>
                             {isLogin ? "Login" : "Signup"}
                         </Button>
                         
                         <MyDivider />
                         
-                        <Typography align="center" variant="body2" color="textSecondary" style={{ margin: '16px 0' }}>
+                        <Typography align="center" variant="body2" color="text.secondary" sx={{ margin: '16px 0' }}>
                            Social login is currently disabled in local mode.
                         </Typography>
 
-                        <Grid container justify="center">
-                            <Grid item xs>
-                                <Link onClick={() => window.location.href='/resetPassword'} variant="body2" style={{ cursor: 'pointer' }}>
+                        <Grid container justifyContent="center">
+                            <Grid size="grow">
+                                <Link 
+                                    onClick={() => window.location.href='/reset'} 
+                                    variant="body2" 
+                                    sx={{ cursor: 'pointer' }}
+                                >
                                     Forgot password?
                                 </Link>
                             </Grid>
-                            <Grid item>
+                            <Grid>
                                 <Link
-                                    className={classes.switch}
+                                    sx={{ cursor: 'pointer' }}
                                     onClick={switchModeHandler}
                                     variant="body2">
                                     {isLogin
@@ -172,20 +147,16 @@ const AuthPage = (props) => {
                                 </Link>
                             </Grid>
                         </Grid>
-                    </form>
-                </div>
+                    </Box>
+                </Box>
             </Container>
-            <footer className={classes.footer}>
+            <Box component="footer" sx={{ padding: (theme) => theme.spacing(3, 2), marginTop: 'auto' }}>
                 <Container maxWidth="sm">
                     <Copyright />
                 </Container>
-            </footer>
-        </div>
+            </Box>
+        </Box>
     );
 };
 
-AuthPage.propTypes = {
-    classes: PropTypes.object.isRequired
-};
-
-export default withStyles(styles)(AuthPage);
+export default AuthPage;

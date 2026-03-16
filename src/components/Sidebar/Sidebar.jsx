@@ -1,134 +1,72 @@
 /* ----------------------------------------------------
 React.js / Sidebar component
 
-Updated: 06/11/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React from 'react';
-import {NavLink} from 'react-router-dom';
+import React, { useState, useContext } from 'react';
+import { NavLink } from 'react-router-dom';
 import ListsContext from '../../context/lists-context';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/Inbox';
-import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-import AssessmentIcon from '@material-ui/icons/Assessment';
-import SettingsIcon from '@material-ui/icons/Settings';
+// Material-UI components (https://mui.com/)
+import CssBaseline from '@mui/material/CssBaseline';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Box from '@mui/material/Box';
 
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
+// Icons
+import InboxIcon from '@mui/icons-material/Inbox';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import SettingsIcon from '@mui/icons-material/Settings';
 
-// eslint-disable-next-line require-jsdoc
 export default function Sidebar() {
-  const classes = useStyles();
-  const [selectedIndex,
-    setSelectedIndex] = React.useState(0);
+  const context = useContext(ListsContext);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleListItemClick = (_event, index) => {
     setSelectedIndex(index);
   };
+
+  const navItems = [
+    { text: 'All Tasks', icon: <InboxIcon color="primary" />, index: 0, to: '/tasks' },
+    { text: 'Today', icon: <CalendarTodayIcon color="primary" />, index: 1, to: '/tasks' },
+    { text: 'Next 7 Days', icon: <DateRangeIcon color="primary" />, index: 2, to: '/tasks' },
+    { text: 'Statistics', icon: <AssessmentIcon color="primary" />, index: 3, to: '/statistics' },
+    { text: 'Completed', icon: <AssignmentTurnedInIcon />, index: 4, to: '/tasks' },
+    { text: 'Settings', icon: <SettingsIcon />, index: 5, to: '/settings' },
+  ];
+
   return (
-    <ListsContext.Consumer>
-      {(context) =>
-        <div className={classes.root}>
-          <CssBaseline />
-          <List component="nav">
-            <ListItem
-              button
-              key="All Task"
-              component={NavLink} to="/tasks"
-              selected={selectedIndex === 0}
+    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+      <CssBaseline />
+      <List component="nav">
+        {navItems.map((item) => (
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              component={NavLink}
+              to={item.to}
+              selected={selectedIndex === item.index}
               onClick={(event) => {
-                context.setListsOption(0);
-                handleListItemClick(event, 0);
+                if (item.index !== 3 && item.index !== 5) {
+                  context.setListsOption(item.index);
+                }
+                handleListItemClick(event, item.index);
               }}
             >
-              <ListItemIcon>
-                <InboxIcon color="primary"/>
-              </ListItemIcon>
-              <ListItemText primary="All Tasks"/>
-            </ListItem>
-            <ListItem
-              button
-              key="Today"
-              component={NavLink} to="/tasks"
-              selected={selectedIndex === 1}
-              onClick={(event) => {
-                context.setListsOption(1);
-                handleListItemClick(event, 1);
-              }}
-            >
-              <ListItemIcon>
-                <CalendarTodayIcon color="primary"/>
-              </ListItemIcon>
-              <ListItemText primary="Today" />
-            </ListItem>
-            <ListItem
-              button
-              component={NavLink} to="/tasks"
-              selected={selectedIndex === 2}
-              onClick={(event) => {
-                context.setListsOption(2);
-                handleListItemClick(event, 2);
-              }}
-            >
-              <ListItemIcon>
-                <DateRangeIcon color="primary" />
-              </ListItemIcon>
-              <ListItemText primary="Next 7 Days" />
-            </ListItem>
-            <ListItem
-              button
-              component={NavLink} to="/statistics"
-              selected={selectedIndex === 3}
-              onClick={(event) => handleListItemClick(event, 3)}
-            >
-              <ListItemIcon>
-                <AssessmentIcon color="primary" />
-              </ListItemIcon>
-              <ListItemText primary="Statistics" />
-            </ListItem>
-            <ListItem
-              button
-              component={NavLink} to="/tasks"
-              selected={selectedIndex === 4}
-              onClick={(event) => {
-                context.setListsOption(4);
-                handleListItemClick(event, 4);
-              }}
-            >
-              <ListItemIcon>
-                <AssignmentTurnedInIcon />
-              </ListItemIcon>
-              <ListItemText primary="Completed" />
-            </ListItem>
-            <ListItem
-              button
-              component={NavLink} to="/settings"
-              selected={selectedIndex === 5}
-              onClick={(event) => handleListItemClick(event, 5)}
-            >
-              <ListItemIcon>
-                <SettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary="Settings" />
-            </ListItem>
-          </List>
-        </div>}
-    </ListsContext.Consumer>
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+    </Box>
   );
-};
+}

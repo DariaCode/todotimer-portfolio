@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
 React.js / Settings page component
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
@@ -10,62 +10,20 @@ import React, { useState, useRef, useContext } from "react";
 import AuthContext from "../context/auth-context";
 import DeleteModal from "../components/Modal/DeleteUserModal";
 
-// Material-UI components (https://material-ui.com/).
-import { withStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import TextField from "@material-ui/core/TextField";
-import Button from "@material-ui/core/Button";
-import Alert from "@material-ui/lab/Alert";
-import Snackbar from "@material-ui/core/Snackbar";
+// Material-UI components (https://mui.com/).
+import CssBaseline from "@mui/material/CssBaseline";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid2";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
+import Box from "@mui/material/Box";
 
-// Style for Material-UI components
-const styles = theme => ({
-  root: {
-    display: "flex",
-    paddingTop: "84px",
-    paddingLeft: "220px",
-    flexDirection: "column",
-    [theme.breakpoints.down("md")]: {
-      paddingTop: "1px",
-      paddingLeft: "1px"
-    }
-  },
-  spinner: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingTop: theme.spacing(10)
-  },
-  paper: {
-    padding: theme.spacing(2.5)
-  },
-  gridWrapper: {
-    padding: theme.spacing(3)
-  },
-  typography: {
-    display: "flex",
-    alignItems: "center"
-  },
-  form: {
-    maxWidth: "350px"
-  },
-  button: {
-    minWidth: "128px",
-    margin: theme.spacing(1)
-  },
-  formButtons: {
-    display: "flex",
-    justifyContent: "center"
-  }
-});
-
-const SettingsPage = (props) => {
-  const { classes } = props;
+const SettingsPage = () => {
   const context = useContext(AuthContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -108,12 +66,9 @@ const SettingsPage = (props) => {
       setErrorEmail("Please enter your current password.");
     } else {
       setErrorEmail("");
-      // Mocking behavioral feedback for standalone local mode
       setSuccessMsgs("Email successfully changed (Saved Locally)!");
       setShowSuccessMsgs(true);
       setChangeEmail(false);
-      
-      // Update local context
       context.login('local', 'local', 3600, newEmail);
     }
   };
@@ -150,36 +105,36 @@ const SettingsPage = (props) => {
   };
 
   return (
-    <div className={classes.root}>
+    <Box sx={{ 
+        display: "flex", 
+        paddingTop: { xs: "1px", md: "84px" }, 
+        paddingLeft: { xs: "1px", md: "220px" }, 
+        flexDirection: "column" 
+    }}>
       <CssBaseline />
       <Container maxWidth="md">
         <Typography component="h1" variant="h4" color="primary" gutterBottom>
           Settings
         </Typography>
         {isLoading ? (
-          <div className={classes.spinner}>
+          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: 10 }}>
             <CircularProgress color="secondary" />
-          </div>
+          </Box>
         ) : (
-          <Paper className={classes.paper}>
-            <Typography
-              component="h2"
-              variant="h6"
-              color="primary"
-              gutterBottom
-            >
+          <Paper sx={{ padding: 2.5 }}>
+            <Typography component="h2" variant="h6" color="primary" gutterBottom>
               Profile
             </Typography>
-            <div className={classes.gridWrapper}>
-              <Grid container direction="row" justify="flex-start">
-                <Grid item xs={12} lg={2} className={classes.typography}>
+            <Box sx={{ padding: 3 }}>
+              <Grid container direction="row" justifyContent="flex-start" spacing={1}>
+                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: "flex", alignItems: "center" }}>
                   <Typography>Email</Typography>
                 </Grid>
-                <Grid item>
+                <Grid size={{ xs: 12, lg: 10 }}>
                   {changeEmail ? (
-                    <Grid className={classes.form}>
+                    <Box sx={{ maxWidth: "350px" }}>
                       {errorEmail && (
-                        <Alert severity="error">
+                        <Alert severity="error" sx={{ mb: 1 }}>
                           {errorEmail}
                         </Alert>
                       )}
@@ -188,10 +143,7 @@ const SettingsPage = (props) => {
                         margin="dense"
                         required
                         fullWidth
-                        id="new_email"
                         label="New Email"
-                        name="new email"
-                        autoComplete="New email"
                         type="email"
                         size="small"
                         inputRef={newEmailEl}
@@ -201,10 +153,7 @@ const SettingsPage = (props) => {
                         margin="dense"
                         required
                         fullWidth
-                        id="confirm_email"
                         label="Confirm Email"
-                        name="comfirm email"
-                        autoComplete="Confirm email"
                         type="email"
                         size="small"
                         inputRef={confEmailEl}
@@ -214,45 +163,37 @@ const SettingsPage = (props) => {
                         margin="dense"
                         required
                         fullWidth
-                        name="password"
                         label="Current Password"
                         type="password"
-                        id="current_password"
-                        autoComplete="current-password"
                         size="small"
                         inputRef={curPasswordEl}
                       />
-                      <Grid className={classes.formButtons}>
+                      <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
                         <Button
-                          className={classes.button}
                           variant="contained"
                           color="primary"
                           onClick={confirmNewEmail}
+                          sx={{ minWidth: "128px", m: 1 }}
                         >
                           Ok
                         </Button>
                         <Button
-                          className={classes.button}
                           variant="outlined"
                           color="secondary"
                           onClick={handleCancelForm}
+                          sx={{ minWidth: "128px", m: 1 }}
                         >
                           Cancel
                         </Button>
-                      </Grid>
-                    </Grid>
+                      </Box>
+                    </Box>
                   ) : (
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-start"
-                      alignItems="center"
-                    >
+                    <Grid container direction="row" justifyContent="flex-start" alignItems="center">
                       <Typography>{context.email || 'local@user.com'}</Typography>
                       <Button
                         color="primary"
-                        className={classes.button}
                         onClick={handleChangeEmail}
+                        sx={{ minWidth: "128px", ml: 1 }}
                       >
                         Change
                       </Button>
@@ -260,15 +201,16 @@ const SettingsPage = (props) => {
                   )}
                 </Grid>
               </Grid>
-              <Grid container direction="row" justify="flex-start">
-                <Grid item xs={12} lg={2} className={classes.typography}>
+              
+              <Grid container direction="row" justifyContent="flex-start" spacing={1} sx={{ mt: 2 }}>
+                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: "flex", alignItems: "center" }}>
                   <Typography>Password</Typography>
                 </Grid>
-                <Grid item>
+                <Grid size={{ xs: 12, lg: 10 }}>
                   {changePassword ? (
-                    <Grid className={classes.form}>
+                    <Box sx={{ maxWidth: "350px" }}>
                       {errorPassword && (
-                        <Alert severity="error">
+                        <Alert severity="error" sx={{ mb: 1 }}>
                           {errorPassword}
                         </Alert>
                       )}
@@ -277,11 +219,8 @@ const SettingsPage = (props) => {
                         margin="dense"
                         required
                         fullWidth
-                        name="password"
                         label="Current Password"
                         type="password"
-                        id="current-password"
-                        autoComplete="current-password"
                         size="small"
                         inputRef={curPasswordEl}
                       />
@@ -290,45 +229,37 @@ const SettingsPage = (props) => {
                         margin="dense"
                         required
                         fullWidth
-                        name="password"
                         label="New Password"
                         type="password"
-                        id="new_password"
-                        autoComplete="new-password"
                         size="small"
                         inputRef={newPasswordEl}
                       />
-                      <Grid className={classes.formButtons}>
+                      <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
                         <Button
-                          className={classes.button}
                           variant="contained"
                           color="primary"
                           onClick={confirmNewPassword}
+                          sx={{ minWidth: "128px", m: 1 }}
                         >
                           Ok
                         </Button>
                         <Button
-                          className={classes.button}
                           variant="outlined"
                           color="secondary"
                           onClick={handleCancelForm}
+                          sx={{ minWidth: "128px", m: 1 }}
                         >
                           Cancel
                         </Button>
-                      </Grid>
-                    </Grid>
+                      </Box>
+                    </Box>
                   ) : (
-                    <Grid
-                      container
-                      direction="row"
-                      justify="flex-start"
-                      alignItems="center"
-                    >
+                    <Grid container direction="row" justifyContent="flex-start" alignItems="center">
                       <Typography>●●●●●●</Typography>
                       <Button
                         color="primary"
-                        className={classes.button}
                         onClick={handleChangePassword}
+                        sx={{ minWidth: "128px", ml: 1 }}
                       >
                         Change
                       </Button>
@@ -336,22 +267,18 @@ const SettingsPage = (props) => {
                   )}
                 </Grid>
               </Grid>
-              <Grid
-                container
-                direction="row"
-                justify="center"
-                alignItems="center"
-              >
+
+              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
                 <Button
                   variant="outlined"
                   color="secondary"
-                  className={classes.button}
                   onClick={handleDeleteUser}
+                  sx={{ minWidth: "128px" }}
                 >
                   Delete Account
                 </Button>
-              </Grid>
-            </div>
+              </Box>
+            </Box>
           </Paper>
         )}
       </Container>
@@ -365,12 +292,13 @@ const SettingsPage = (props) => {
           variant="outlined"
           severity="success"
           onClose={handleCloseSnackbar}
+          sx={{ width: '100%' }}
         >
           {successMsgs}
         </Alert>
       </Snackbar>
-    </div>
+    </Box>
   );
 };
 
-export default withStyles(styles)(SettingsPage);
+export default SettingsPage;

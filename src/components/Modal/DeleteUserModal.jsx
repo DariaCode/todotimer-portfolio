@@ -1,37 +1,27 @@
 /* ----------------------------------------------------
 React.js / Delete user modal component
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React, { useState, useRef, useContext } from "react";
 import AuthContext from "../../context/auth-context";
 
-// Material-UI components (https://material-ui.com/)
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import Alert from "@material-ui/lab/Alert";
-import Grid from "@material-ui/core/Grid";
-import Checkbox from "@material-ui/core/Checkbox";
-
-// Style for Material-UI components
-const styles = theme => ({
-  action: {
-    justifyContent: "flex-start",
-    padding: theme.spacing(2, 3, 3, 3)
-  },
-  button: {}
-});
+// Material-UI components (https://mui.com/)
+import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogTitle from "@mui/material/DialogTitle";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Alert from "@mui/material/Alert";
+import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
 
 const DeleteModal = (props) => {
-  const { classes, onCancel } = props;
+  const { onCancel } = props;
   const context = useContext(AuthContext);
 
   const [showError, setShowError] = useState("");
@@ -64,7 +54,7 @@ const DeleteModal = (props) => {
     <Dialog open fullWidth aria-labelledby="form-dialog-title">
       <DialogTitle id="form-dialog-title">Delete account</DialogTitle>
       <DialogContent>
-        <Typography color="secondary">
+        <Typography color="secondary" sx={{ mb: 2 }}>
           Warning: Deleting account will remove all your data!
         </Typography>
         <TextField
@@ -72,39 +62,33 @@ const DeleteModal = (props) => {
           margin="normal"
           required
           fullWidth
-          id="email-confirm"
           label="Please confirm the current email."
-          name="email-confirm"
-          autoComplete="email"
           type="email"
           inputRef={emailEl}
         />
         {showError && (
-          <Alert severity="error">{showError}</Alert>
+          <Alert severity="error" sx={{ mb: 2 }}>{showError}</Alert>
         )}
-        <Grid container direction="row" alignItems="center">
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <Checkbox
             color="primary"
             checked={checkOne}
             onChange={handleCheckBoxOne}
-            name="checkedOne"
           />
           <Typography variant="body2">I am aware that deleting account will remove all my data.</Typography>
-        </Grid>
-        <Grid container direction="row" alignItems="center">
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Checkbox
             color="primary"
             checked={checkTwo}
             onChange={handleCheckBoxTwo}
-            name="checkedTwo"
           />
           <Typography variant="body2">I am sure I want to delete my account.</Typography>
-        </Grid>
+        </Box>
       </DialogContent>
-      <DialogActions className={classes.action}>
+      <DialogActions sx={{ justifyContent: "flex-start", padding: (theme) => theme.spacing(2, 3, 3, 3) }}>
         <Button
           onClick={handleConfirm}
-          className={classes.button}
           variant="contained"
           color="primary"
           disabled={!(checkOne && checkTwo)}
@@ -123,4 +107,4 @@ const DeleteModal = (props) => {
   );
 };
 
-export default withStyles(styles)(DeleteModal);
+export default DeleteModal;

@@ -1,153 +1,128 @@
 /* ----------------------------------------------------
 React.js / Date Picker component
 
-Updated: 05/06/2020
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React from 'react';
+import React, { useState } from 'react';
 
-// Material-UI components (https://material-ui.com/)
-import {makeStyles} from '@material-ui/core/styles';
-import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
-import Popper from '@material-ui/core/Popper';
-import Paper from '@material-ui/core/Paper';
-import DateFnsUtils from '@date-io/date-fns';
-import {DatePicker} from '@material-ui/pickers';
-import {MuiPickersUtilsProvider} from '@material-ui/pickers';
-import DateRangeIcon from '@material-ui/icons/DateRange';
-
-// Style for Material-UI components
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    flexDirection: 'column',
-    padding: theme.spacing(1),
-  },
-  popper: {
-    // The popper clipped under the dialog during editing task.
-    zIndex: theme.zIndex.modal + 2,
-  },
-  buttonBox: {
-    display: 'flex',
-    justifyContent: 'space-evenly',
-  },
-  button: {
-    minWidth: '121px',
-  },
-}));
+// Material-UI components (https://mui.com/)
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Popper from '@mui/material/Popper';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
+import DateRangeIcon from '@mui/icons-material/DateRange';
 
 // eslint-disable-next-line react/display-name
-const datePicker = React.forwardRef((props, ref) => {
-  const [selectedDate,
-    setSelectedDate] = React.useState();
-  const [anchorEl,
-    setAnchorEl] = React.useState(null);
-  const classes = useStyles();
+const DatePicker = React.forwardRef((props, ref) => {
+  const [selectedDate, setSelectedDate] = useState();
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  console.log('date picker: selected date', selectedDate);
   const handleClick = (event) => {
-    setAnchorEl(anchorEl ?
-            null :
-            event.currentTarget);
+    setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ?
-        'simple-popper' :
-        undefined;
+  const id = open ? 'simple-popper' : undefined;
 
   const handleDateChange = (date) => {
-    const formatDate = new Date(date).toISOString();
-    setSelectedDate(formatDate);
+    if (date) {
+        const formatDate = new Date(date).toISOString();
+        setSelectedDate(formatDate);
+    }
   };
 
-  const today = new Date().toISOString();
+  const today = new Date();
   const handleToday = () => {
-    setSelectedDate(today);
+    setSelectedDate(today.toISOString());
   };
 
-  const tomorrow = new Date(today);
-  const formatTomorrow = tomorrow.setDate(tomorrow.getDate() + 1);
   const handleTomorrow = () => {
-    setSelectedDate(new Date(formatTomorrow).toISOString());
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    setSelectedDate(tomorrow.toISOString());
   };
 
-
-  const handleClear = (date) => {
+  const handleClear = () => {
     setSelectedDate(undefined);
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
+    setAnchorEl(null);
   };
 
-  const handleOk = (date) => {
-    setAnchorEl(anchorEl ?
-            null :
-            date.currentTarget);
+  const handleOk = () => {
+    setAnchorEl(null);
   };
 
   return (
-    <div>
+    <Box>
       <IconButton
         aria-describedby={id}
         onClick={handleClick}
+        ref={ref}
         value={selectedDate}
-        ref={ref}>
-        {selectedDate === undefined ?
-          <DateRangeIcon /> :
-          <DateRangeIcon color="primary" />}
+      >
+        <DateRangeIcon color={selectedDate ? "primary" : "inherit"} />
       </IconButton>
-      <Popper id={id} open={open} anchorEl={anchorEl} className={classes.popper}>
-        <Paper>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <div className={classes.root}>
-              <div className={classes.buttonBox}>
+      <Popper 
+        id={id} 
+        open={open} 
+        anchorEl={anchorEl} 
+        sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
+      >
+        <Paper elevation={3}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', padding: 1 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mb: 1 }}>
                 <Button
-                  className={classes.button}
                   variant="outlined"
                   onClick={handleToday}
-                  color="primary">
-              Today
+                  color="primary"
+                  sx={{ minWidth: '121px' }}
+                >
+                  Today
                 </Button>
                 <Button
-                  className={classes.button}
                   variant="outlined"
                   onClick={handleTomorrow}
-                  color="primary">
-              Tomorrow
+                  color="primary"
+                  sx={{ minWidth: '121px' }}
+                >
+                  Tomorrow
                 </Button>
-              </div>
-              <DatePicker
-                disableToolbar
+              </Box>
+              <StaticDatePicker
                 disablePast
-                variant="static"
-                orientation="portrait"
-                value={selectedDate}
-                onChange={handleDateChange}/>
-              <div className={classes.buttonBox}>
+                displayStaticWrapperAs="desktop"
+                value={selectedDate ? new Date(selectedDate) : null}
+                onChange={handleDateChange}
+                slots={{
+                    actionBar: () => null // Hide default action bar as we have custom buttons
+                }}
+              />
+              <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 1 }}>
                 <Button
-                  className={classes.button}
                   variant="contained"
                   onClick={handleOk}
-                  color="primary">
-              Ok
+                  color="primary"
+                  sx={{ minWidth: '121px' }}
+                >
+                  Ok
                 </Button>
                 <Button
-                  className={classes.button}
                   variant="outlined"
                   onClick={handleClear}
-                  color="secondary">
-              Clear
+                  color="secondary"
+                  sx={{ minWidth: '121px' }}
+                >
+                  Clear
                 </Button>
-              </div>
-            </div>
-          </MuiPickersUtilsProvider>
+              </Box>
+            </Box>
         </Paper>
       </Popper>
-    </div>
+    </Box>
   );
 });
 
-export default datePicker;
+export default DatePicker;

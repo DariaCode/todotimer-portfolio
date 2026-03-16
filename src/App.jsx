@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
 React.js / Main App.js
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
@@ -9,6 +9,7 @@ Website: www.dariacode.dev
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from 'react-router-dom';
 
+import AuthPage from './pages/Auth';
 import TasksPage from './pages/Tasks';
 import StatisticsPage from './pages/Statistics';
 import SettingsPage from './pages/Settings';
@@ -19,10 +20,11 @@ import MainNavigation from './components/Navigation/MainNavigation';
 import AuthContext from './context/auth-context';
 import ListsContext from './context/lists-context';
 
-import { ThemeProvider } from '@material-ui/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
-const theme = createMuiTheme({
+const theme = createTheme({
     palette: {
         primary: {
             main: '#3B8BEB',
@@ -36,11 +38,11 @@ const theme = createMuiTheme({
 const App = () => {
     const [token, setToken] = useState('local');
     const [userId, setUserId] = useState('local');
-    const [listsOption, setListsOption] = useState(null);
-    const [email, setEmail] = useState(null);
+    const [listsOption, setListsOption] = useState(0);
+    const [email, setEmail] = useState('local@user.com');
 
     useEffect(() => {
-        // Local state is already set to 'local' for skipping auth
+        // Local session is the default for standalone mode
         console.log("App initialized: using local session");
     }, []);
 
@@ -62,41 +64,44 @@ const App = () => {
         setEmail(null);
     };
 
-    console.log('App component rendering...');
-
     return (
         <BrowserRouter>
             <React.Fragment>
-                <ThemeProvider theme={theme}>
-                    <AuthContext.Provider
+                <AuthContext.Provider
+                    value={{
+                        token: token,
+                        userId: userId,
+                        email: email,
+                        login: login,
+                        logout: logout
+                    }}
+                >
+                    <ListsContext.Provider
                         value={{
-                            token: token,
-                            userId: userId,
-                            email: email,
-                            login: login,
-                            logout: logout
-                        }}>
-                        <ListsContext.Provider value={{
                             listsOption: listsOption,
                             setListsOption: setListsOption,
-                        }}>
-                            <MainNavigation />
-                            <main className="main-content">
-                                <Switch>
-                                    <Redirect from="/" to="/tasks" exact />
-                                    <Redirect from="/auth" to="/tasks" exact />
-                                    <Route path="/tasks" component={TasksPage} />
-                                    <Route path="/statistics" component={StatisticsPage} />
-                                    <Route path="/settings" component={SettingsPage} />
-                                    <Route path="/confirm/:emailToken" component={ConfirmPage} />
-                                    <Route path="/resetPassword" component={ResetPasswordEmailPage} exact />
-                                    <Route path="/resetPassword/:emailToken" component={ResetPasswordPage} />
-                                    <Redirect to="/tasks" />
-                                </Switch>
-                            </main>
-                        </ListsContext.Provider>
-                    </AuthContext.Provider>
-                </ThemeProvider>
+                        }}
+                    >
+                        <ThemeProvider theme={theme}>
+                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                <MainNavigation />
+                                <main className="main-content">
+                                    <Switch>
+                                        <Route path="/auth" component={AuthPage} />
+                                        <Route path="/tasks" component={TasksPage} />
+                                        <Route path="/statistics" component={StatisticsPage} />
+                                        <Route path="/settings" component={SettingsPage} />
+                                        <Route path="/confirm/:emailToken" component={ConfirmPage} />
+                                        <Route path="/reset" component={ResetPasswordEmailPage} />
+                                        <Route path="/resetPassword/:emailToken" component={ResetPasswordPage} />
+                                        <Redirect from="/" to="/tasks" exact />
+                                        <Redirect from="/auth" to="/tasks" exact />
+                                    </Switch>
+                                </main>
+                            </LocalizationProvider>
+                        </ThemeProvider>
+                    </ListsContext.Provider>
+                </AuthContext.Provider>
             </React.Fragment>
         </BrowserRouter>
     );

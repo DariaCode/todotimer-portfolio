@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import ListsContext from '../../../context/lists-context';
 
 import DayList from './DayList';
@@ -141,33 +141,27 @@ const lists = (props) => {
   });
 
 
-  return (
-    <ListsContext.Consumer>
-      {(value) =>{
-        let currectLists;
-        switch (value.listsOption) {
-          case 0:
-            currectLists = listsAll;
-            break;
-          case 1:
-            currectLists = listsToday;
-            break;
-          case 2:
-            currectLists = lists7Days;
-            break;
-          case 4:
-            currectLists = listsCompleted;
-            break;
-          default:
-            currectLists = listsAll;
-        }
-        return (
-          <div>
-            {currectLists}
-          </div>)
-        ;
-      }}
-    </ListsContext.Consumer>);
+  const listsContext = useContext(ListsContext);
+
+  let currentLists;
+  switch (listsContext.listsOption) {
+    case 0:
+      currentLists = listsAll;
+      break;
+    case 1:
+      currentLists = listsToday;
+      break;
+    case 2:
+      currentLists = lists7Days;
+      break;
+    case 4:
+      currentLists = listsCompleted;
+      break;
+    default:
+      currentLists = listsAll;
+  }
+
+  return <div>{currentLists}</div>;
 };
 
 export default lists;

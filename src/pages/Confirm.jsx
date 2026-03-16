@@ -1,7 +1,7 @@
 /* ----------------------------------------------------
 React.js / Email confirmation page
 
-Updated: 03/2026
+Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
@@ -9,55 +9,18 @@ Website: www.dariacode.dev
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-// Material-UI components (https://material-ui.com/)
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+// Material-UI components (https://mui.com/)
+import CssBaseline from '@mui/material/CssBaseline';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Paper from '@mui/material/Paper';
+import Button from '@mui/material/Button';
+import CircularProgress from '@mui/material/CircularProgress';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import Box from '@mui/material/Box';
+import { green } from '@mui/material/colors';
 
-// Material-UI components (https://material-ui.com/)
-import { withStyles } from '@material-ui/core/styles';
-import { green } from '@material-ui/core/colors';
-
-// Style for Material-UI components
-const styles = (theme) => ({
-    root: {
-        display: 'flex',
-        paddingTop: '124px',
-        flexDirection: 'column',
-    },
-    paper: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        padding: theme.spacing(5.5)
-    },
-    spinner: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingTop: theme.spacing(10)
-    },
-    icon: {
-        color: green[500],
-        fontSize: 50
-    },
-    text: {
-        paddingTop: theme.spacing(5.5),
-        paddingBottom: theme.spacing(5.5)
-    },
-    link: {
-        textDecoration: 'none',
-        color: 'inherit',
-    }
-});
-
-const ConfirmPage = (props) => {
-    const { classes } = props;
+const ConfirmPage = () => {
     const { emailToken } = useParams();
     const [confirming, setConfirming] = useState(true);
 
@@ -74,32 +37,53 @@ const ConfirmPage = (props) => {
     }, [emailToken]);
 
     return (
-        <div className={classes.root}>
+        <Box sx={{ 
+            display: 'flex', 
+            paddingTop: '124px', 
+            flexDirection: 'column' 
+        }}>
             <CssBaseline />
             <Container maxWidth="md">
                 {confirming ? (
-                    <div className={classes.spinner}>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        paddingTop: 10 
+                    }}>
                         <CircularProgress color="secondary" />
-                    </div>
+                    </Box>
                 ) : (
-                    <Paper className={classes.paper}>
-                        <CheckCircleOutlineIcon className={classes.icon} />
+                    <Paper sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        flexDirection: 'column', 
+                        padding: 5.5 
+                    }}>
+                        <CheckCircleOutlineIcon sx={{ color: green[500], fontSize: 50 }} />
                         <Typography
                             component="h2"
                             variant="h5"
                             color="primary"
-                            className={classes.text}
+                            sx={{ paddingTop: 5.5, paddingBottom: 5.5 }}
                             gutterBottom>
                             Your email has been confirmed!
                         </Typography>
-                        <Button variant="outlined" color="primary">
-                            <Link className={classes.link} to='/'>Go to Homepage</Link>
+                        <Button 
+                            variant="outlined" 
+                            color="primary"
+                            component={Link}
+                            to="/"
+                            sx={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                            Go to Homepage
                         </Button>
                     </Paper>
                 )}
             </Container>
-        </div>
+        </Box>
     );
 };
 
-export default withStyles(styles)(ConfirmPage);
+export default ConfirmPage;
