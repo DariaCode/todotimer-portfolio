@@ -1,12 +1,12 @@
 /* ----------------------------------------------------
 React.js / Tasks page component
 
-Updated: 05/06/2020
+Updated: 03/2026
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, {Component} from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import AuthContext from '../context/auth-context';
 
 
@@ -30,13 +30,12 @@ const styles = theme => ({
     root: {
         display: 'flex',
         paddingTop: '64px',
-        // paddingLeft: '260px',
         flexDirection: 'column',
     },
     taskView: {
         maxWidth: '60vw',
-        padding: theme.spacing(3,1),
-        [theme.breakpoints.down('md')]:{
+        padding: theme.spacing(3, 1),
+        [theme.breakpoints.down('md')]: {
             maxWidth: '100vw',
         },
     },
@@ -53,53 +52,58 @@ const styles = theme => ({
     taskEdit: {
         display: 'flex',
     },
-  });
-class TasksPage extends Component {
-    state = {
-        creating: false,
-        updating: false,
-        tasks: [],
-        isLoading: false,
-        updatedTask: null
+});
+
+const TasksPage = (props) => {
+    const { classes } = props;
+    const context = useContext(AuthContext);
+
+    const [creating, setCreating] = useState(false);
+    const [updating, setUpdating] = useState(false);
+    const [tasks, setTasks] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [updatedTask, setUpdatedTask] = useState(null);
+
+    const titleElRef = useRef();
+    const priorityElRef = useRef();
+    const dateElRef = useRef();
+    const dateRepeatElRef = useRef();
+
+    useEffect(() => {
+        let isActive = true;
+        
+        const fetchTasks = () => {
+            setIsLoading(true);
+            const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            if (isActive) {
+                setTasks(savedTasks);
+                setIsLoading(false);
+            }
+        };
+
+        fetchTasks();
+
+        return () => {
+            isActive = false;
+        };
+    }, []);
+
+    const startCreateTaskHandler = () => {
+        setCreating(true);
     };
 
-    isActive = true;
-
-    static contextType = AuthContext;
-
-    constructor(props) {
-        super(props);
-        this.titleElRef = React.createRef();
-        this.priorityElRef = React.createRef();
-        this.dateElRef = React.createRef();
-        this.dateRepeatElRef = React.createRef();
-        this.completeElRef = React.createRef();
-    }
-
-    // componentDidMount() executes when the page loads = is invoked immediately
-    // after a component is mounted (inserted into the tree).
-    componentDidMount() {
-        this.fetchTasks();
-    };
-
-    startCreateTaskHandler = () => {
-        this.setState({creating: true});
-    };
-
-    modalConfirmHandler = () => {
-        this.setState({creating: false});
-        const title = this.titleElRef.current.value;
-        const priority = +this.priorityElRef.current.value;
-        let date = this.dateElRef.current.value;
-        let dateRepeat = this
-            .dateRepeatElRef
-            .current
-            .value
-            .split(",");
+    const modalConfirmHandler = () => {
+        setCreating(false);
+        const title = titleElRef.current.value;
+        const priority = +priorityElRef.current.value;
+        let date = dateElRef.current.value;
+        let dateRepeat = dateRepeatElRef.current.value.split(",");
+        
         let start = null;
         let end = null;
         let intervalK = null;
         let intervalN = null;
+
         if (dateRepeat.length > 1) {
             start = new Date(dateRepeat[0]).toISOString();
             end = new Date(dateRepeat[1]).toISOString();
@@ -107,28 +111,14 @@ class TasksPage extends Component {
             intervalN = dateRepeat[3];
             date = start;
         }
-        console.log(dateRepeat);
-        // to check input some data isn't empty. trim()-remove whitespace from both
-        // sides of a string.
+
         if (title.trim().length === 0 || priority <= 0) {
             return;
-        };
+        }
 
         if (date.length === 0) {
             date = null;
-        };
-
-        // the task is an object with properties title: title, priority: priority, etc.
-        const task = {
-            title,
-            priority,
-            date,
-            start,
-            end,
-            intervalK,
-            intervalN
-        };
-        console.log("check if the task object is rigth: ", task)
+        }
 
         const newTask = {
             _id: Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -142,46 +132,39 @@ class TasksPage extends Component {
             intervalN: intervalN || null,
             creator: { _id: 'local' }
         };
+
         const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
         savedTasks.push(newTask);
         localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        this.setState(prevState => ({
-            tasks: [...prevState.tasks, newTask]
-        }));
-        this.titleElRef.current.value = '';
+        
+        setTasks(prevTasks => [...prevTasks, newTask]);
+        titleElRef.current.value = '';
     };
 
-    modalCancelHandler = () => {
-        this.setState({creating: false, updating: false, selectedTask: null});
+    const modalCancelHandler = () => {
+        setCreating(false);
+        setUpdating(false);
+        setUpdatedTask(null);
     };
 
-    fetchTasks() {
-        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        if (this.isActive) {
-            this.setState({tasks: savedTasks, isLoading: false});
-        }
+    const startEditTaskHandler = taskId => {
+        setUpdating(true);
+        setUpdatedTask(taskId);
     };
 
-    startEditTaskHandler = taskId => {
-        this.setState({updating: true, updatedTask: taskId});
-        console.log('updating state ',this.state.updating)
-    };
-
-    editTaskHandler = () => {
-        this.setState({updating: false});
-        const taskId = this.state.updatedTask;
-        const title = this.titleElRef.current.value;
-        const priority = +this.priorityElRef.current.value;
-        let date = this.dateElRef.current.value;
-        let dateRepeat = this
-        .dateRepeatElRef
-        .current
-        .value
-        .split(",");
+    const editTaskHandler = () => {
+        setUpdating(false);
+        const taskId = updatedTask;
+        const title = titleElRef.current.value;
+        const priority = +priorityElRef.current.value;
+        let date = dateElRef.current.value;
+        let dateRepeat = dateRepeatElRef.current.value.split(",");
+        
         let start = null;
         let end = null;
         let intervalK = null;
         let intervalN = null;
+
         if (dateRepeat.length > 1) {
             start = new Date(dateRepeat[0]).toISOString();
             end = new Date(dateRepeat[1]).toISOString();
@@ -193,123 +176,136 @@ class TasksPage extends Component {
         const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
         const taskIndex = savedTasks.findIndex(task => task._id === taskId);
         if (taskIndex !== -1) {
-            savedTasks[taskIndex] = { ...savedTasks[taskIndex], title, priority, date: date || null, start: start || null, end: end || null, intervalK: intervalK || null, intervalN: intervalN || null };
+            savedTasks[taskIndex] = { 
+                ...savedTasks[taskIndex], 
+                title, 
+                priority, 
+                date: date || null, 
+                start: start || null, 
+                end: end || null, 
+                intervalK: intervalK || null, 
+                intervalN: intervalN || null 
+            };
         }
         localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        this.setState(prevState => {
-            const updatedTasks = [...prevState.tasks];
-            const idx = updatedTasks.findIndex(task => task._id === taskId);
+        
+        setTasks(prevTasks => {
+            const updatedTasksList = [...prevTasks];
+            const idx = updatedTasksList.findIndex(task => task._id === taskId);
             if (idx !== -1) {
-                updatedTasks[idx] = { ...updatedTasks[idx], title, priority, date: date || null, start: start || null, end: end || null, intervalK: intervalK || null, intervalN: intervalN || null };
+                updatedTasksList[idx] = { 
+                    ...updatedTasksList[idx], 
+                    title, 
+                    priority, 
+                    date: date || null, 
+                    start: start || null, 
+                    end: end || null, 
+                    intervalK: intervalK || null, 
+                    intervalN: intervalN || null 
+                };
             }
-            return { tasks: updatedTasks, updatedTask: null };
+            return updatedTasksList;
         });
+        setUpdatedTask(null);
     };
 
-    completeTaskHandler = taskId => {
+    const completeTaskHandler = taskId => {
         const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
         const taskIndex = savedTasks.findIndex(task => task._id === taskId);
         if (taskIndex !== -1) {
             savedTasks[taskIndex].complete = !savedTasks[taskIndex].complete;
         }
         localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        this.setState(prevState => {
-            const updatedTasks = [...prevState.tasks];
-            const idx = updatedTasks.findIndex(task => task._id === taskId);
+        
+        setTasks(prevTasks => {
+            const updatedTasksList = [...prevTasks];
+            const idx = updatedTasksList.findIndex(task => task._id === taskId);
             if (idx !== -1) {
-                updatedTasks[idx] = { ...updatedTasks[idx], complete: !updatedTasks[idx].complete };
+                updatedTasksList[idx] = { 
+                    ...updatedTasksList[idx], 
+                    complete: !updatedTasksList[idx].complete 
+                };
             }
-            return { tasks: updatedTasks };
+            return updatedTasksList;
         });
     };
 
-    deleteTaskHandler = taskId => {
+    const deleteTaskHandler = taskId => {
         const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
             .filter(task => task._id !== taskId);
         localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        this.setState(prevState => ({
-            tasks: prevState.tasks.filter(task => task._id !== taskId)
-        }));
-    };
-    // componentWillUnmount() is invoked immediately before a component is unmounted
-    // and destroyed. Perform any necessary cleanup in this method, such as
-    // invalidating timers, canceling network requests, or cleaning up any
-    // subscriptions that were created in componentDidMount().
-    componentWillUnmount() {
-        this.isActive = false;
+        
+        setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
     };
 
-    render() {
-        const { classes } = this.props;
-        return (
-            <React.Fragment>
-                <div className={classes.root}>
+    return (
+        <React.Fragment>
+            <div className={classes.root}>
                 <CssBaseline />
                 <Container maxWidth="sm">
-                <div className={classes.taskView}>
-                <TextField
-                        id="outlined-basic"
-                        label="Add task"
-                        variant="outlined"
-                        size="medium"
-                        multiline
-                        fullWidth
-                        inputRef={this.titleElRef}
-                        onClick={this.startCreateTaskHandler}/>
+                    <div className={classes.taskView}>
+                        <TextField
+                            id="outlined-basic"
+                            label="Add task"
+                            variant="outlined"
+                            size="medium"
+                            multiline
+                            fullWidth
+                            inputRef={titleElRef}
+                            onClick={startCreateTaskHandler} />
 
-                {this.state.creating && <AddTask
-                    onCancel={this.modalCancelHandler}
-                    onConfirm={this.modalConfirmHandler}>
-                    <form className={classes.addTaskIcons}>
-                            <PriorityPopper ref={this.priorityElRef}/>
-                            <DatePicker ref={this.dateElRef}/>
-                            <RepeatTask ref={this.dateRepeatElRef}/>
-                    </form>
-                </AddTask>}
+                        {creating && <AddTask
+                            onCancel={modalCancelHandler}
+                            onConfirm={modalConfirmHandler}>
+                            <form className={classes.addTaskIcons}>
+                                <PriorityPopper ref={priorityElRef} />
+                                <DatePicker ref={dateElRef} />
+                                <RepeatTask ref={dateRepeatElRef} />
+                            </form>
+                        </AddTask>}
 
-                {this.state.isLoading
-                    ? <div className={classes.spinner}> 
-                        <CircularProgress 
-                        color="secondary" /> 
-                      </div>
-                    : <Lists
-                        tasks={this.state.tasks}
-                        authUserIdMain={this.context.userId}
-                        onViewDetailMain={this.showDetailHandler}
-                        onDeleteTaskMain={this.deleteTaskHandler}
-                        onEditTaskMain={this.startEditTaskHandler}
-                        onCompleteTaskMain={this.completeTaskHandler} />
-                    }
-                </div>
+                        {isLoading
+                            ? <div className={classes.spinner}>
+                                <CircularProgress
+                                    color="secondary" />
+                            </div>
+                            : <Lists
+                                tasks={tasks}
+                                authUserIdMain={context.userId}
+                                onViewDetailMain={() => {}} // Placeholder if needed
+                                onDeleteTaskMain={deleteTaskHandler}
+                                onEditTaskMain={startEditTaskHandler}
+                                onCompleteTaskMain={completeTaskHandler} />
+                        }
+                    </div>
                 </Container>
 
-                {this.state.updating && <Modal
-                    onCancel={this.modalCancelHandler}
-                    onConfirm={this.editTaskHandler}
+                {updating && <Modal
+                    onCancel={modalCancelHandler}
+                    onConfirm={editTaskHandler}
                     confirmText="confirm">
                     <form className={classes.taskEdit}>
-                    <TextField
-                        id="outlined-basic"
-                        label="Edit task"
-                        variant="outlined"
-                        size="medium"
-                        multiline
-                        fullWidth
-                        inputRef={this.titleElRef}/>
-                    <PriorityPopper ref={this.priorityElRef}/>
-                    <DatePicker ref={this.dateElRef}/>
-                    <RepeatTask ref={this.dateRepeatElRef}/>
-                    <div>
-                    <IconButton onClick={this.deleteTaskHandler.bind(this, this.state.updatedTask)}>
-                        <DeleteOutlineIcon color="secondary"/>
-                    </IconButton>
-                    </div>
+                        <TextField
+                            id="outlined-basic-edit"
+                            label="Edit task"
+                            variant="outlined"
+                            size="medium"
+                            multiline
+                            fullWidth
+                            inputRef={titleElRef} />
+                        <PriorityPopper ref={priorityElRef} />
+                        <DatePicker ref={dateElRef} />
+                        <RepeatTask ref={dateRepeatElRef} />
+                        <div>
+                            <IconButton onClick={() => deleteTaskHandler(updatedTask)}>
+                                <DeleteOutlineIcon color="secondary" />
+                            </IconButton>
+                        </div>
                     </form>
                 </Modal>}
-                </div>
-            </React.Fragment>
-        );
-    }
+            </div>
+        </React.Fragment>
+    );
 };
 
 export default withStyles(styles)(TasksPage);
