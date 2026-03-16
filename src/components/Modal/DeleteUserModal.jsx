@@ -1,11 +1,11 @@
 /* ----------------------------------------------------
 React.js / Delete user modal component
 
-Updated: 06/23/2020
+Updated: 03/2026
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React, { Component } from "react";
+import React, { useState, useRef, useContext } from "react";
 import AuthContext from "../../context/auth-context";
 
 // Material-UI components (https://material-ui.com/)
@@ -30,147 +30,97 @@ const styles = theme => ({
   button: {}
 });
 
-// eslint-disable-next-line require-jsdoc
-class DeleteModal extends Component {
-  state = {
-    showError: "",
-    checkOne: false,
-    checkTwo: false
-  };
-  // To add access to context data.
-  static contextType = AuthContext;
+const DeleteModal = (props) => {
+  const { classes, onCancel } = props;
+  const context = useContext(AuthContext);
 
-  constructor(props) {
-    super(props);
-    this.emailEl = React.createRef();
-  }
+  const [showError, setShowError] = useState("");
+  const [checkOne, setCheckOne] = useState(false);
+  const [checkTwo, setCheckTwo] = useState(false);
 
-  checkBoxOneHandler = () => {
-    this.state.checkOne
-      ? this.setState({ checkOne: false })
-      : this.setState({ checkOne: true });
+  const emailEl = useRef();
+
+  const handleCheckBoxOne = () => {
+    setCheckOne(prev => !prev);
   };
 
-  checkBoxTwoHandler = () => {
-    this.state.checkTwo
-      ? this.setState({ checkTwo: false })
-      : this.setState({ checkTwo: true });
+  const handleCheckBoxTwo = () => {
+    setCheckTwo(prev => !prev);
   };
 
-  confirmHandler = () => {
-    const email = this.emailEl.current.value;
-    if (email !== this.context.email) {
-      this.setState({ showError: "Email is incorrect" });
+  const handleConfirm = () => {
+    const emailInput = emailEl.current.value;
+    if (emailInput !== context.email) {
+      setShowError("Email is incorrect");
     } else {
-      this.setState({ showError: "" });
-      // To create body for POST request for login
-      let requestBody = {
-        query: `
-          mutation DeleteUser($userId: ID!) {
-            deleteUser(userId: $userId) {
-              msgs
-              }
-            }
-          `,
-        variables: {
-          userId: this.context.userId
-        }
-      };
-
-      fetch("http://localhost:8000/graphql", {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-        headers: {
-          "Content-Type": "application/json"
-        }
-      })
-        .then(res => {
-          if (res.status !== 200 && res.status !== 201) {
-            throw new Error("Failed ");
-          }
-          return res.json();
-        })
-        .then(resData => {
-          this.context.logout();
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      setShowError("");
+      // Mocking behavioral feedback for standalone local mode
+      console.log("Account deletion mocked. Clearing local session...");
+      context.logout();
     }
   };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <Dialog open fullWidth aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Delete account</DialogTitle>
-        <DialogContent>
-          <Typography color="secondary">
-            Warning: Deleting account will remove all your data!
-          </Typography>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Please confirm the current email."
-            name="email"
-            autoComplete="email"
-            type="email"
-            inputRef={this.emailEl}
+  return (
+    <Dialog open fullWidth aria-labelledby="form-dialog-title">
+      <DialogTitle id="form-dialog-title">Delete account</DialogTitle>
+      <DialogContent>
+        <Typography color="secondary">
+          Warning: Deleting account will remove all your data!
+        </Typography>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="email-confirm"
+          label="Please confirm the current email."
+          name="email-confirm"
+          autoComplete="email"
+          type="email"
+          inputRef={emailEl}
+        />
+        {showError && (
+          <Alert severity="error">{showError}</Alert>
+        )}
+        <Grid container direction="row" alignItems="center">
+          <Checkbox
+            color="primary"
+            checked={checkOne}
+            onChange={handleCheckBoxOne}
+            name="checkedOne"
           />
-          {this.state.showError && (
-            <Alert severity="error">{this.state.showError}</Alert>
-          )}
-          <Grid container direction="row" justify="flex-start">
-            <Checkbox
-              color="primary"
-              onChange={this.checkBoxOneHandler}
-              name="checkedOne"
-            />
-            <p>I am aware that deleting account will remove all my data.</p>
-          </Grid>
-          <Grid container direction="row" justify="flex-start">
-            <Checkbox
-              color="primary"
-              onChange={this.checkBoxTwoHandler}
-              name="checkedTwo"
-            />
-            <p>I am sure I want to delete my account.</p>
-          </Grid>
-        </DialogContent>
-        <DialogActions className={classes.action}>
-          {this.state.checkOne && this.state.checkTwo ? (
-            <Button
-              onClick={this.confirmHandler}
-              className={classes.button}
-              variant="contained"
-              color="primary"
-            >
-              Confirm
-            </Button>
-          ) : (
-            <Button
-              className={classes.button}
-              variant="contained"
-              color="primary"
-              disabled
-            >
-              Confirm
-            </Button>
-          )}
-          <Button
-            onClick={this.props.onCancel}
-            variant="outlined"
-            color="secondary"
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  }
-}
+          <Typography variant="body2">I am aware that deleting account will remove all my data.</Typography>
+        </Grid>
+        <Grid container direction="row" alignItems="center">
+          <Checkbox
+            color="primary"
+            checked={checkTwo}
+            onChange={handleCheckBoxTwo}
+            name="checkedTwo"
+          />
+          <Typography variant="body2">I am sure I want to delete my account.</Typography>
+        </Grid>
+      </DialogContent>
+      <DialogActions className={classes.action}>
+        <Button
+          onClick={handleConfirm}
+          className={classes.button}
+          variant="contained"
+          color="primary"
+          disabled={!(checkOne && checkTwo)}
+        >
+          Confirm
+        </Button>
+        <Button
+          onClick={onCancel}
+          variant="outlined"
+          color="secondary"
+        >
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default withStyles(styles)(DeleteModal);

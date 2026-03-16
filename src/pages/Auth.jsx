@@ -1,22 +1,20 @@
 /* ----------------------------------------------------
 React.js / Auth component
 
-Updated: 06/19/2020
+Updated: 03/2026
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, {Component} from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import AuthContext from '../context/auth-context';
-import Facebook from '../components/Social_auth/Facebook';
-import Google from '../components/Social_auth/Google';
 import MyDivider from '../components/Social_auth/Divider';
 
 // Material-UI components (https://material-ui.com/)
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
-import {withStyles} from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Avatar from '@material-ui/core/Avatar';
@@ -62,11 +60,9 @@ const styles = (theme) => ({
     submit: {
         margin: theme.spacing(3, 0, 2)
     },
-    facebook: {
-        margin: theme.spacing(3, 0, 2),
-    },
     switch: {
-        alignItems: 'center'
+        alignItems: 'center',
+        cursor: 'pointer'
     },
     footer: {
         padding: theme.spacing(3, 2),
@@ -74,225 +70,120 @@ const styles = (theme) => ({
     }
 });
 
-class AuthPage extends Component {
-    state = {
-        isLogin: true,
-        showError: ""
-    }
+const AuthPage = (props) => {
+    const { classes } = props;
+    const context = useContext(AuthContext);
 
-    // To add access to context data.
-    static contextType = AuthContext;
+    const [isLogin, setIsLogin] = useState(true);
+    const [showError, setShowError] = useState("");
+    const emailEl = useRef();
+    const passwordEl = useRef();
 
-    constructor(props) {
-        super(props);
-        this.emailEl = React.createRef();
-        this.passwordEl = React.createRef();
-    }
+    const switchModeHandler = () => {
+        setIsLogin(prev => !prev);
+    };
 
-    switchModeHandler = () => {
-        this.setState(prevState => {
-            return {
-                isLogin: !prevState.isLogin
-            };
-        })
-    }
-
-    submitHandler = (event) => {
+    const submitHandler = (event) => {
         event.preventDefault();
-        const email = this.emailEl.current.value;
-        const password = this.passwordEl.current.value;
+        const email = emailEl.current.value;
+        const password = passwordEl.current.value;
 
-        // The trim() method removes whitespace from both sides of a string
         if (email.trim().length === 0 || password.trim().length === 0) {
             return;
         }
 
-        // To create body for POST request for login
-        let requestBody = {
-            query: `
-                query Login($email: String!, $password: String!) {
-                    login(email: $email, password: $password) {
-                        userId
-                        token
-                        tokenExpiration
-                        email
-                    }
-                }
-            `,
-            variables: {
-                email: email,
-                password: password
-            }
-        };
-
-        // To create body for POST request for creating a user.
-        if (!this.state.isLogin) {
-            requestBody = {
-                query: `
-                    mutation CreateUser($email: String!, $password: String!){
-                        createUser(userInput: {email: $email, password: $password}) {
-                            userId
-                            token
-                            tokenExpiration
-                            email
-                        }
-                    }
-                `,
-                variables: {
-                    email: email,
-                    password: password
-                }
-            };
-        }
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                // To handle error message.
-                let showError = res.json();
-                showError.then(val => {
-                    switch (val.errors[0].message) {
-                        case "Password is incorrect":
-                            this.setState({showError: "Password is incorrect"})
-                            break;
-                        case "User does not exist":
-                            this.setState({showError: "User does not exist"})
-                            break;
-                        case "User exists already":
-                            this.setState({showError: "User exists already"})
-                            break;
-                        default:
-                            this.setState({showError: ""})
-                    }
-                    console.log('this state ', this.state.showError);
-                    console.log('val of error from res', val.errors[0].message)
-                });
-                throw new Error('Failed');
-            }
-            return res.json();
-        }).then(resData => {
-            console.log(resData);
-            let token;
-            let userId;
-            let tokenExpiration;
-            let email;
-            if (resData.data.login) {
-                token = resData.data.login.token;
-                userId = resData.data.login.userId;
-                tokenExpiration = resData.data.login.tokenExpiration;
-                email = resData.data.login.email; 
-            } else {
-                token = resData.data.createUser.token;
-                userId = resData.data.createUser.userId;
-                tokenExpiration = resData.data.createUser.tokenExpiration;
-                email = resData.data.createUser.email;
-            }
-            this.context.login(token, userId, tokenExpiration, email);
-        }).catch(err => {
-            console.log(err);
-        });
+        // Mocking login for standalone local mode
+        console.log(`${isLogin ? 'Login' : 'Signup'} requested for: ${email}`);
+        
+        // Always succeed with a local token in this mode
+        context.login('local', 'local', 3600, email);
     };
 
-    render() {
-        const {classes} = this.props;
-        return (
-            <div className={classes.root}>
-                <CssBaseline/>
-                <Container component="main" maxWidth="xs">
-                    {/* component="main"- default is "div" */}
-                    <div className={classes.paper}>
-                        {/* CHANGE THE AVATAR FOR THE LOGO ICON!!! */}
-                        <Avatar className={classes.avatar}>
-                            <LockOutlinedIcon/>
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            {this.state.isLogin
-                                ? "Login"
-                                : "Signup"}
+    return (
+        <div className={classes.root}>
+            <CssBaseline />
+            <Container component="main" maxWidth="xs">
+                <div className={classes.paper}>
+                    <Avatar className={classes.avatar}>
+                        <LockOutlinedIcon />
+                    </Avatar>
+                    <Typography component="h1" variant="h5">
+                        {isLogin ? "Login" : "Signup"}
+                    </Typography>
+                    <form className={classes.form} onSubmit={submitHandler}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email Address"
+                            name="email"
+                            autoComplete="email"
+                            type="email"
+                            inputRef={emailEl} />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            inputRef={passwordEl} />
+
+                        {showError && (
+                            <Alert severity="error">
+                                {showError}
+                            </Alert>
+                        )}
+
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            className={classes.submit}>
+                            {isLogin ? "Login" : "Signup"}
+                        </Button>
+                        
+                        <MyDivider />
+                        
+                        <Typography align="center" variant="body2" color="textSecondary" style={{ margin: '16px 0' }}>
+                           Social login is currently disabled in local mode.
                         </Typography>
-                        <form className={classes.form} onSubmit={this.submitHandler}>
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                id="email"
-                                label="Email Address"
-                                name="email"
-                                autoComplete="email"
-                                type="email"
-                                inputRef={this.emailEl}/>
-                            <TextField
-                                variant="outlined"
-                                margin="normal"
-                                required
-                                fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
-                                inputRef={this.passwordEl}/>
 
-                                {this.state.showError &&
-                                <Alert 
-                                severity="error">
-                                {this.state.showError}
-                                </Alert>}
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}>
-                                {this.state.isLogin
-                                    ? "Login"
-                                    : "Signup"}
-                            </Button>
-                            <MyDivider />
-                            <div className={classes.submit}>
-                                <Facebook />
-                            </div>
-                            <div className={classes.submit}>
-                                <Google />
-                            </div>
-                            <Grid container justify="center">
+                        <Grid container justify="center">
                             <Grid item xs>
-                                <Link href="/resetPassword" variant="body2">
+                                <Link onClick={() => window.location.href='/resetPassword'} variant="body2" style={{ cursor: 'pointer' }}>
                                     Forgot password?
                                 </Link>
-                            </Grid> 
-                                <Grid item>
-                                    <Link
-                                        className={classes.switch}
-                                        onClick={this.switchModeHandler}
-                                        variant="body">
-                                        {this.state.isLogin
-                                            ? "Don't have an account? Signup"
-                                            : "Already have an account? Login"}
-                                    </Link>
-                                </Grid>
                             </Grid>
-                        </form>
-                    </div>
+                            <Grid item>
+                                <Link
+                                    className={classes.switch}
+                                    onClick={switchModeHandler}
+                                    variant="body2">
+                                    {isLogin
+                                        ? "Don't have an account? Signup"
+                                        : "Already have an account? Login"}
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </form>
+                </div>
+            </Container>
+            <footer className={classes.footer}>
+                <Container maxWidth="sm">
+                    <Copyright />
                 </Container>
-                <footer className={classes.footer}>
-                    <Container maxWidth="sm">
-                        <Copyright/>
-                    </Container>
-                </footer>
-            </div> 
-        );
-    }
-}
+            </footer>
+        </div>
+    );
+};
 
-// To apply the styles given above for Material-UI components.
 AuthPage.propTypes = {
     classes: PropTypes.object.isRequired
 };

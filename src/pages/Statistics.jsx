@@ -1,13 +1,12 @@
 /* ----------------------------------------------------
 React.js / Statistics page component
 
-Updated: 05/10/2020
+Updated: 03/2026
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { Component } from "react";
-import AuthContext from "../context/auth-context";
+import React, { useState, useEffect } from "react";
 import { today } from "../dateHelpers/dateHelpers";
 import Overview from "../components/Statistics/Overview";
 import BarChart from "../components/Statistics/BarChart";
@@ -50,203 +49,150 @@ const styles = theme => ({
 
 const COLORS = ["#82b5f2", "#fd76a2"];
 
-class StatisticsPage extends Component {
-  state = {
-    tasks: [],
-    isLoading: false,
-    complete: null,
-    incomplete: null,
-    overdue: null,
-    total: null,
-    pieData: []
-  };
+const StatisticsPage = (props) => {
+  const { classes } = props;
+  const [tasks, setTasks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [stats, setStats] = useState({
+    complete: 0,
+    incomplete: 0,
+    overdue: 0,
+    total: 0
+  });
 
-  isActive = true;
-
-  static contextType = AuthContext;
-
-  // componentDidMount() executes when the page loads = is invoked immediately
-  // after a component is mounted (inserted into the tree).
-  componentDidMount() {
-    this.fetchTasks();
-  }
-
-  fetchTasks() {
-    this.setState({ isLoading: true });
-    const requestBody = {
-      query: `
-        query {
-            tasks {
-                _id
-                title
-                priority
-                date
-                complete
-                start
-                end
-                intervalK
-                intervalN
-                creator {
-                    _id
-                    email
-                }
-            }
+  useEffect(() => {
+    const fetchTasks = () => {
+      setIsLoading(true);
+      
+      // Using localStorage instead of GraphQL fetch for the "local" standalone mode
+      const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+      
+      const processedTasks = savedTasks.map(task => {
+        if (task.date === "1970-01-01T00:00:00.000Z") {
+          task.date = null;
+        } else if (task.date) {
+          task.date = new Date(task.date).toISOString();
         }
-    `
+        return task;
+      });
+
+      const total = processedTasks.length;
+      const complete = processedTasks.filter(task => task.complete === true).length;
+      const incomplete = total - complete;
+      const overdue = processedTasks.filter(
+        task => task.date && task.date < today && task.complete === false
+      ).length;
+
+      setTasks(processedTasks);
+      setStats({
+        complete,
+        incomplete,
+        overdue,
+        total
+      });
+      setIsLoading(false);
     };
 
-    fetch("http://localhost:8000/graphql", {
-      method: "POST",
-      body: JSON.stringify(requestBody),
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + this.context.token
-      }
-    })
-      .then(res => {
-        if (res.status !== 200 && res.status !== 201) {
-          throw new Error("it is Failed ");
-        }
-        return res.json();
-      })
-      .then(resData => {
-        const tasks = resData.data.tasks.map(task => {
-          if (task.date === "1970-01-01T00:00:00.000Z") {
-            task.date = null;
-          } else {
-            task.date = new Date(task.date).toISOString();
-          }
-          return task;
-        });
-        const total = tasks.length;
-        const complete = tasks.filter(task => task.complete === true).length;
-        const incomplete = total - complete;
-        const overdue = tasks.filter(
-          task => task.date < today && task.complete === false
-        ).length;
-        console.log(tasks);
-        if (this.isActive) {
-          this.setState({
-            tasks: tasks,
-            isLoading: false,
-            complete: complete,
-            incomplete: incomplete,
-            overdue: overdue,
-            total: total
-          });
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        this.setState({ isLoading: false });
-      });
-  }
+    fetchTasks();
+  }, []);
 
-  // componentWillUnmount() is invoked immediately before a component is unmounted
-  // and destroyed. Perform any necessary cleanup in this method, such as
-  // invalidating timers, canceling network requests, or cleaning up any
-  // subscriptions that were created in componentDidMount().
-  componentWillUnmount() {
-    this.isActive = false;
-  }
+  const pieData = [
+    {
+      name: "Complete",
+      value: stats.complete
+    },
+    {
+      name: "Incomplete",
+      value: stats.incomplete
+    }
+  ];
 
-  render() {
-    const { classes } = this.props;
-    const pieData = [
-      {
-        name: "Complete",
-        value: this.state.complete
-      },
-      {
-        name: "Incomplete",
-        value: this.state.incomplete
-      }
-    ];
-    return (
-      <div className={classes.root}>
-        <CssBaseline />
-        <Container maxWidth="md">
-          <Typography component="h1" variant="h4" color="primary" gutterBottom>
-            Statistics
-          </Typography>
-          {this.state.isLoading ? (
-            <div className={classes.spinner}>
-              <CircularProgress color="secondary" />
-            </div>
-          ) : (
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <Paper className={classes.paper}>
-                  <Typography
-                    component="h2"
-                    variant="h6"
-                    color="primary"
-                    gutterBottom
-                  >
-                    Overview
-                  </Typography>
-                  <Grid container spacing={3}>
-                    <Grid md={6} item xs={12} lg={6}>
-                      <Overview
-                        complete={this.state.complete}
-                        incomplete={this.state.incomplete}
-                        overdue={this.state.overdue}
-                        total={this.state.total}
-                      />
-                    </Grid>
-                    <Grid md={6} item xs={12} lg={6}>
-                      <ResponsiveContainer width="100%" height={240}>
-                        <PieChart onMouseEnter={this.onPieEnter}>
-                          <Pie
-                            data={pieData}
-                            label
-                            innerRadius={60}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            paddingAngle={5}
-                          >
-                            {pieData.map((entry, index) => (
-                              <Cell fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Legend />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </Grid>
+  return (
+    <div className={classes.root}>
+      <CssBaseline />
+      <Container maxWidth="md">
+        <Typography component="h1" variant="h4" color="primary" gutterBottom>
+          Statistics
+        </Typography>
+        {isLoading ? (
+          <div className={classes.spinner}>
+            <CircularProgress color="secondary" />
+          </div>
+        ) : (
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <Paper className={classes.paper}>
+                <Typography
+                  component="h2"
+                  variant="h6"
+                  color="primary"
+                  gutterBottom
+                >
+                  Overview
+                </Typography>
+                <Grid container spacing={3}>
+                  <Grid md={6} item xs={12} lg={6}>
+                    <Overview
+                      complete={stats.complete}
+                      incomplete={stats.incomplete}
+                      overdue={stats.overdue}
+                      total={stats.total}
+                    />
                   </Grid>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={6} lg={6}>
-                <Paper className={classes.paper}>
-                  <Typography
-                    component="h2"
-                    variant="h6"
-                    color="primary"
-                    gutterBottom
-                  >
-                    Week Completion Rate
-                  </Typography>
-                  <BarChart tasks={this.state.tasks} />
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={6} lg={6}>
-                <Paper className={classes.paper}>
-                  <Typography
-                    component="h2"
-                    variant="h6"
-                    color="primary"
-                    gutterBottom
-                  >
-                    Week Completion Curve
-                  </Typography>
-                  <AreaChart tasks={this.state.tasks} />
-                </Paper>
-              </Grid>
+                  <Grid md={6} item xs={12} lg={6}>
+                    <ResponsiveContainer width="100%" height={240}>
+                      <PieChart>
+                        <Pie
+                          data={pieData}
+                          label
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {pieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </Grid>
+                </Grid>
+              </Paper>
             </Grid>
-          )}
-        </Container>
-      </div>
-    );
-  }
-}
+            <Grid item xs={12} md={6} lg={6}>
+              <Paper className={classes.paper}>
+                <Typography
+                  component="h2"
+                  variant="h6"
+                  color="primary"
+                  gutterBottom
+                >
+                  Week Completion Rate
+                </Typography>
+                <BarChart tasks={tasks} />
+              </Paper>
+            </Grid>
+            <Grid item xs={12} md={6} lg={6}>
+              <Paper className={classes.paper}>
+                <Typography
+                  component="h2"
+                  variant="h6"
+                  color="primary"
+                  gutterBottom
+                >
+                  Week Completion Curve
+                </Typography>
+                <AreaChart tasks={tasks} />
+              </Paper>
+            </Grid>
+          </Grid>
+        )}
+      </Container>
+    </div>
+  );
+};
+
 export default withStyles(styles)(StatisticsPage);
