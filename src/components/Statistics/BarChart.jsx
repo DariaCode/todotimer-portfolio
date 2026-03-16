@@ -7,9 +7,8 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
-import {localDates} from '../../dateHelpers/dateHelpers';
+import { localDates, formatWithOrdinal } from '../../utils/dateUtils';
 
-// (http://recharts.org/).
 import {
   BarChart,
   Bar,
@@ -20,59 +19,42 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
+import { format, parseISO } from 'date-fns';
+
 // eslint-disable-next-line require-jsdoc
 export default function Overview(props) {
   console.log('barChart', props.tasks);
+  
   // Divide tasks according to their date and completed status.
-  const lists = props.tasks.reduce((lists, task) => {
-    let date = task.date;
-    if ( date !== null) {
-      // To change dates to local time zone.
-      const formatedDate = new Date(task.date).toLocaleDateString();
-      date = formatedDate;
+  const lists = props.tasks.reduce((acc, task) => {
+    if (task.date) {
+      // Use consistent date-fns formatting for grouping
+      const formattedDate = format(parseISO(task.date), 'M/d/yyyy');
+      if (!acc[formattedDate]) {
+        acc[formattedDate] = [];
+      }
+      acc[formattedDate].push(task);
     }
-    if (!lists[date]) {
-      lists[date] = [];
-    }
-    lists[date].push(task);
-    return lists;
+    return acc;
   }, {});
-  const listsGroups = Object.keys(lists).map((date) => {
-    return {
-      date,
-      tasks: lists[date],
-    };
-  });
 
-  const barData=[];
+  const barData = [];
   for (let i = 0; i < 7; i++) {
-    const tempTask = listsGroups.find((list) => list.date === localDates[i]);
-    let date = new Date(localDates[i]).getDate();
-    const signalDate = (date < 20) ? date : Number(('' + date).slice(-1));
-    switch (signalDate) {
-      case 1:
-        date = date + 'st';
-        break;
-      case 2:
-        date = date + 'nd';
-        break;
-      case 3:
-        date = date + 'rd';
-        break;
-      default:
-        date = date + 'th';
-    }
-    if (tempTask === undefined) {
-      barData.push({date: date, complete: 0});
+    const dateStr = localDates[i];
+    const tasksForDay = lists[dateStr] || [];
+    
+    // Use centralized helper for the label (e.g., 17th)
+    const label = formatWithOrdinal(dateStr);
+
+    if (tasksForDay.length === 0) {
+      barData.push({ date: label, complete: 0 });
     } else {
-      const total = parseInt(tempTask.tasks.length);
-      const completeNum = parseInt(tempTask.tasks.filter((task)=>
-        task.complete === true).length);
-      const complete = ((100/total)*completeNum);
-      console.log(total, typeof total, completeNum, typeof completeNum);
-      barData.push({date: date, complete: Math.floor(complete)});
+      const total = tasksForDay.length;
+      const completeCount = tasksForDay.filter(task => task.complete).length;
+      const percentage = Math.floor((completeCount / total) * 100);
+      barData.push({ date: label, complete: percentage });
     }
-  };
+  }
   console.log('barData', barData);
 
   return (

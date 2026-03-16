@@ -6,6 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React, { useState } from 'react';
+import { format, addDays, startOfToday } from 'date-fns';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';
@@ -35,14 +36,13 @@ const DatePicker = React.forwardRef((props, ref) => {
     }
   };
 
-  const today = new Date();
   const handleToday = () => {
+    const today = startOfToday();
     setSelectedDate(today.toISOString());
   };
 
   const handleTomorrow = () => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrow = addDays(startOfToday(), 1);
     setSelectedDate(tomorrow.toISOString());
   };
 
@@ -93,7 +93,6 @@ const DatePicker = React.forwardRef((props, ref) => {
               </Box>
               <StaticDatePicker
                 disablePast
-                displayStaticWrapperAs="desktop"
                 value={selectedDate ? new Date(selectedDate) : null}
                 onChange={handleDateChange}
                 slots={{

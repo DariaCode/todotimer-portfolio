@@ -7,7 +7,7 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 
 import React, { useState, useEffect } from "react";
-import { today } from "../dateHelpers/dateHelpers";
+import { today } from "../utils/dateUtils";
 import Overview from "../components/Statistics/Overview";
 import BarChart from "../components/Statistics/BarChart";
 import AreaChart from "../components/Statistics/AreaChart";

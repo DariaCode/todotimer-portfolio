@@ -8,7 +8,7 @@ Website: www.dariacode.dev
 import React from 'react';
 
 import TaskItem from './TaskItem';
-import { todayLocalDate, tomorrowLocalDate } from '../../../dateHelpers/dateHelpers';
+import { todayLocalDate, tomorrowLocalDate } from '../../../utils/dateUtils';
 
 // Material-UI components (https://mui.com/)
 import Typography from '@mui/material/Typography';

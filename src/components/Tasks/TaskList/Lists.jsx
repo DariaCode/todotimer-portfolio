@@ -11,7 +11,7 @@ import ListsContext from '../../../context/lists-context';
 
 import DayList from './DayList';
 import {todayDate, todayLocalDate,
-  weekLocalDate} from '../../../dateHelpers/dateHelpers';
+  weekLocalDate} from '../../../utils/dateUtils';
 
 const lists = (props) => {
   // Divide tasks according to their date and completed status.
