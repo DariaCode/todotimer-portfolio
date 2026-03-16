@@ -1,33 +1,45 @@
 {
-  "name": "timer-app",
-  "version": "1.0.0",
-  "description": "timer app",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js"
-  },
-  "author": "Daria Vodzinskaia dariacode.dev",
-  "license": "GPL",
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
-    "dataloader": "^2.0.0",
-    "express": "^4.17.1",
-    "express-graphql": "^0.9.0",
-    "graphql": "^14.6.0",
-    "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.9.4",
-    "nodemailer": "^6.4.8",
-    "passport": "^0.4.1",
-    "passport-facebook-token": "^3.3.0",
-    "passport-google-token": "^0.1.2"
-  },
-  "devDependencies": {
+    "@date-io/date-fns": "^1.3.13",
+    "@material-ui/core": "^4.9.12",
+    "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.51",
+    "@material-ui/pickers": "^3.2.10",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "date-fns": "^2.11.0",
     "eslint": "^6.8.0",
-    "eslint-config-google": "^0.14.0",
-    "eslint-plugin-react": "^7.19.0",
-    "nodemon": "^2.0.2"
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-facebook-login": "^4.1.1",
+    "react-google-login": "^5.1.20",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.0",
+    "recharts": "^1.8.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
