@@ -134,72 +134,25 @@ class TasksPage extends Component {
         };
         console.log("check if the task object is rigth: ", task)
 
-        const requestBody = {
-            query: `
-                mutation CreateTask($title: String!, $priority: Float!, $date: String, $start: String, $end: String, $intervalK: Float, $intervalN: String) {
-                    createTask(taskInput: {title: $title, priority: $priority, date: $date, complete: false, start: $start, end: $end, intervalK: $intervalK, intervalN: $intervalN}) {
-                        _id
-                        title
-                        priority
-                        date
-                        complete
-                        start
-                        end
-                        intervalK
-                        intervalN
-                    }
-                }
-            `,
-            variables: {
-                title: title,
-                priority: priority,
-                date: date,
-                start: start,
-                end: end,
-                intervalK: intervalK,
-                intervalN: intervalN
-            }
+        const newTask = {
+            _id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+            title,
+            priority,
+            date: date || null,
+            complete: false,
+            start: start || null,
+            end: end || null,
+            intervalK: intervalK || null,
+            intervalN: intervalN || null,
+            creator: { _id: 'local' }
         };
-
-        const token = this.context.token;
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error('it is Failed ');
-            }
-            return res.json();
-        }).then(resData => {
-            this.setState(prevState => {
-                const updatedTasks = [...prevState.tasks];
-                console.log("resData after save: ", resData.data.createTask);
-                updatedTasks.push({
-                    _id: resData.data.createTask._id,
-                    title: resData.data.createTask.title,
-                    priority: resData.data.createTask.priority,
-                    date: resData.data.createTask.date === "1970-01-01T00:00:00.000Z"
-                        ? null
-                        : resData.data.createTask.date,
-                    complete: resData.data.createTask.complete,
-                    end: resData.data.createTask.end === "1970-01-01T00:00:00.000Z"
-                    ? null
-                    : resData.data.createTask.end,
-                    creator: {
-                        _id: this.context.userId
-                    }
-                });
-                return {tasks: updatedTasks};
-            });
-            this.titleElRef.current.value = '';
-        }).catch(err => {
-            console.log(err);
-        });
+        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        savedTasks.push(newTask);
+        localStorage.setItem('tasks', JSON.stringify(savedTasks));
+        this.setState(prevState => ({
+            tasks: [...prevState.tasks, newTask]
+        }));
+        this.titleElRef.current.value = '';
     };
 
     modalCancelHandler = () => {
@@ -207,62 +160,10 @@ class TasksPage extends Component {
     };
 
     fetchTasks() {
-        this.setState({isLoading: true});
-        const requestBody = {
-            query: `
-            query {
-                tasks {
-                    _id
-                    title
-                    priority
-                    date
-                    complete
-                    start
-                    end
-                    intervalK
-                    intervalN
-                    creator {
-                        _id
-                        email
-                    }
-                }
-            }
-        `
-        };
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.token
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error('it is Failed ');
-            }
-            return res.json();
-        }).then(resData => {
-            const tasks = resData
-                .data
-                .tasks
-                .map(task => {
-                    if (task.date === "1970-01-01T00:00:00.000Z") {
-                        task.date = null;
-                    } else {
-                        task.date = new Date(task.date).toISOString();
-                    }
-                    return task;
-
-                });
-            console.log(tasks);
-            if (this.isActive) {
-                this.setState({tasks: tasks, isLoading: false});
-            }
-        }).catch(err => {
-            console.log(err);
-            this.setState({isLoading: false});
-        });
+        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        if (this.isActive) {
+            this.setState({tasks: savedTasks, isLoading: false});
+        }
     };
 
     startEditTaskHandler = taskId => {
@@ -293,165 +194,46 @@ class TasksPage extends Component {
             date = start;
         }
 
-        const requestBody = {
-            query: `
-                mutation EditTask($id: ID!, $title: String, $priority: Float, $date: String, $start: String, $end: String, $intervalK: Float, $intervalN: String) {
-                    updateTask(taskId: $id, taskInput: {title: $title,  priority: $priority, date: $date, start: $start, end: $end, intervalK: $intervalK, intervalN: $intervalN}) {
-                        _id
-                        title
-                        priority
-                        date
-                        complete
-                        start
-                        end
-                        intervalK
-                        intervalN
-                    }
-                }
-            `,
-            variables: {
-                id: taskId,
-                title: title,
-                priority: priority,
-                date: date,
-                start: start,
-                end: end,
-                intervalK: intervalK,
-                intervalN: intervalN
+        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        const taskIndex = savedTasks.findIndex(task => task._id === taskId);
+        if (taskIndex !== -1) {
+            savedTasks[taskIndex] = { ...savedTasks[taskIndex], title, priority, date: date || null, start: start || null, end: end || null, intervalK: intervalK || null, intervalN: intervalN || null };
+        }
+        localStorage.setItem('tasks', JSON.stringify(savedTasks));
+        this.setState(prevState => {
+            const updatedTasks = [...prevState.tasks];
+            const idx = updatedTasks.findIndex(task => task._id === taskId);
+            if (idx !== -1) {
+                updatedTasks[idx] = { ...updatedTasks[idx], title, priority, date: date || null, start: start || null, end: end || null, intervalK: intervalK || null, intervalN: intervalN || null };
             }
-        };
-
-        const token = this.context.token;
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed ');
-            }
-            return res.json();
-        }).then(resData => {
-            console.log('update resData', resData);
-            this.setState(prevState => {
-                const updatedTasks = [...prevState.tasks];
-                function formatedDate (date) {
-                    return new Date(parseInt(date)).toISOString();
-                };
-                const taskIndex = updatedTasks.findIndex((task => task._id === resData.data.updateTask._id));
-                updatedTasks[taskIndex].title = resData.data.updateTask.title;
-                updatedTasks[taskIndex].priority = resData.data.updateTask.priority;
-                updatedTasks[taskIndex].date = formatedDate(resData.data.updateTask.date);
-                if(resData.data.updateTask.start) {
-                    updatedTasks[taskIndex].start = formatedDate(resData.data.updateTask.start);
-                    updatedTasks[taskIndex].date = updatedTasks[taskIndex].start;
-                    updatedTasks[taskIndex].end = formatedDate(resData.data.updateTask.end);
-                    updatedTasks[taskIndex].intervalK = +resData.data.updateTask.intervalK;
-                    updatedTasks[taskIndex].intervalN = resData.data.updateTask.intervalN; 
-                }              
-                return {tasks: updatedTasks, updatedTask: null};
-            });
-
-        }).catch(err => {
-            console.log(err);
+            return { tasks: updatedTasks, updatedTask: null };
         });
     };
 
     completeTaskHandler = taskId => {
-        const requestBody = {
-            query: `
-                mutation CompleteTask($id: ID!) {
-                    completeTask(taskId: $id) {
-                        _id
-                        title
-                        priority
-                        date
-                        complete
-                    }
-                }
-            `,
-            variables: {
-                id: taskId
+        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        const taskIndex = savedTasks.findIndex(task => task._id === taskId);
+        if (taskIndex !== -1) {
+            savedTasks[taskIndex].complete = !savedTasks[taskIndex].complete;
+        }
+        localStorage.setItem('tasks', JSON.stringify(savedTasks));
+        this.setState(prevState => {
+            const updatedTasks = [...prevState.tasks];
+            const idx = updatedTasks.findIndex(task => task._id === taskId);
+            if (idx !== -1) {
+                updatedTasks[idx] = { ...updatedTasks[idx], complete: !updatedTasks[idx].complete };
             }
-        };
-
-        const token = this.context.token;
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed ');
-            }
-            return res.json();
-        }).then(resData => {
-            this.setState(prevState => {
-                const updatedTasks = [...prevState.tasks];
-                console.log(updatedTasks);
-                const taskIndex = updatedTasks.findIndex((task => task._id === resData.data.completeTask._id));
-                if (resData.data.completeTask.date === null) {
-                    updatedTasks[taskIndex].date = null;
-                } else {
-                    updatedTasks[taskIndex].date = new Date(parseInt(resData.data.completeTask.date)).toISOString();
-                }
-                updatedTasks[taskIndex].complete = resData.data.completeTask.complete;
-                return {tasks: updatedTasks};
-            });
-
-        }).catch(err => {
-            console.log(err);
+            return { tasks: updatedTasks };
         });
     };
 
     deleteTaskHandler = taskId => {
-        const requestBody = {
-            query: `
-            mutation DeleteTask($id: ID!) {
-                deleteTask(taskId: $id) {
-                    _id
-                    title
-                }
-            }
-        `,
-            variables: {
-                id: taskId
-            }
-        };
-
-        fetch('http://localhost:8000/graphql', {
-            method: 'POST',
-            body: JSON.stringify(requestBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + this.context.token
-            }
-        }).then(res => {
-            if (res.status !== 200 && res.status !== 201) {
-                throw new Error('Failed ');
-            }
-            return res.json();
-        }).then(resData => {
-            this.setState(prevState => {
-                const updatedTasks = prevState
-                    .tasks
-                    .filter(task => {
-                        return task._id !== taskId;
-                    });
-                return {tasks: updatedTasks};
-            });
-        }).catch(err => {
-            console.log(err);
-            this.setState({isLoading: false});
-        });
+        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
+            .filter(task => task._id !== taskId);
+        localStorage.setItem('tasks', JSON.stringify(savedTasks));
+        this.setState(prevState => ({
+            tasks: prevState.tasks.filter(task => task._id !== taskId)
+        }));
     };
     // componentWillUnmount() is invoked immediately before a component is unmounted
     // and destroyed. Perform any necessary cleanup in this method, such as
@@ -469,8 +251,7 @@ class TasksPage extends Component {
                 <CssBaseline />
                 <Container maxWidth="sm">
                 <div className={classes.taskView}>
-                {this.context.token && 
-                    <TextField
+                <TextField
                         id="outlined-basic"
                         label="Add task"
                         variant="outlined"
@@ -479,7 +260,6 @@ class TasksPage extends Component {
                         fullWidth
                         inputRef={this.titleElRef}
                         onClick={this.startCreateTaskHandler}/>
-                }
 
                 {this.state.creating && <AddTask
                     onCancel={this.modalCancelHandler}

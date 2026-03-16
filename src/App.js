@@ -121,16 +121,15 @@ class App extends Component {
                         <MainNavigation/>
                         <main className="main-content">
                             <Switch>
-                                {this.state.token && <Redirect from="/" to="/tasks" exact/>}
-                                {this.state.token && <Redirect from="/auth" to="/tasks" exact/>}
-                                {!this.state.token && <Route path="/auth" component={AuthPage}/>}
+                                <Redirect from="/" to="/tasks" exact/>
+                                <Redirect from="/auth" to="/tasks" exact/>
+                                <Route path="/tasks" component={TasksPage}/>
+                                <Route path="/statistics" component={StatisticsPage}/>
+                                <Route path="/settings" component={SettingsPage}/>
                                 <Route path="/confirm/:emailToken" component={ConfirmPage}/>
                                 <Route path="/resetPassword" component={ResetPasswordEmailPage} exact/>
                                 <Route path="/resetPassword/:emailToken" component={ResetPasswordPage}/>
-                                {this.state.token && <Route path="/tasks" component={TasksPage}/>}
-                                {this.state.token && <Route path="/statistics" component={StatisticsPage}/>}
-                                {this.state.token && <Route path="/settings" component={SettingsPage}/>}
-                                {!this.state.token && <Redirect to="/auth" exact/>}
+                                <Redirect to="/tasks"/>
                             </Switch>
                         </main>
                         </ListsContext.Provider>
