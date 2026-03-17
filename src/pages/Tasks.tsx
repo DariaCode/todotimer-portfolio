@@ -20,16 +20,12 @@ import Box from '@mui/material/Box';
 
 const RootBox = styled(Box)(() => ({
   display: 'flex',
-  paddingTop: '64px',
   flexDirection: 'column',
 }));
 
 const TaskViewBox = styled(Box)(({ theme }) => ({
-  maxWidth: '60vw',
+  width: '100%',
   padding: theme.spacing(UI_SPACING_DEFAULT, 1),
-  [theme.breakpoints.down('md')]: {
-    maxWidth: '100vw',
-  },
 }));
 
 const AddTaskIconsBox = styled('form')(() => ({
@@ -186,9 +182,9 @@ const TasksPage: React.FC = () => {
     }
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-    setTasks((prevTasks) => {
+    setTasks((prevTasks: Task[]) => {
       const updatedTasksList = [...prevTasks];
-      const idx = updatedTasksList.findIndex((task) => task._id === taskId);
+      const idx = updatedTasksList.findIndex((task: Task) => task._id === taskId);
       if (idx !== -1) {
         updatedTasksList[idx] = {
           ...updatedTasksList[idx],
@@ -205,7 +201,7 @@ const TasksPage: React.FC = () => {
     );
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    setTasks((prevTasks: Task[]) => prevTasks.filter((task: Task) => task._id !== taskId));
   };
 
   return (

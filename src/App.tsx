@@ -10,6 +10,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
 
 // Lazy load pages for better performance
 const AuthPage = lazy(() => import('./pages/Auth'));
@@ -19,6 +20,8 @@ const SettingsPage = lazy(() => import('./pages/Settings'));
 const ConfirmPage = lazy(() => import('./pages/Confirm'));
 const ResetPasswordEmailPage = lazy(() => import('./pages/ResetPasswordEmail'));
 const ResetPasswordPage = lazy(() => import('./pages/ResetPassword'));
+
+import { initializeLocalTasks } from './utils/initialData';
 
 const theme = createTheme({
   palette: {
@@ -40,6 +43,7 @@ const App: React.FC = () => {
   useEffect(() => {
     // Local session is the default for standalone mode
     console.log('App initialized: using local session');
+    initializeLocalTasks();
   }, []);
 
   const login = (token: string, userId: string, _: unknown, email: string) => {
@@ -86,21 +90,49 @@ const App: React.FC = () => {
           >
             <ThemeProvider theme={theme}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <MainNavigation />
-                <main className='main-content'>
-                  <Suspense fallback={Loading}>
-                    <Routes>
-                      <Route path='/auth' element={<AuthPage />} />
-                      <Route path='/tasks' element={<TasksPage />} />
-                      <Route path='/statistics' element={<StatisticsPage />} />
-                      <Route path='/settings' element={<SettingsPage />} />
-                      <Route path='/confirm/:emailToken' element={<ConfirmPage />} />
-                      <Route path='/reset' element={<ResetPasswordEmailPage />} />
-                      <Route path='/resetPassword/:emailToken' element={<ResetPasswordPage />} />
-                      <Route path='/' element={<Navigate to='/tasks' replace />} />
-                    </Routes>
-                  </Suspense>
-                </main>
+                <Box sx={{ display: 'flex' }}>
+                  <MainNavigation />
+                  <Box
+                    component='main'
+                    sx={{
+                      flexGrow: 1,
+                      width: {
+                        xs: `calc(100% - 72px)`,
+                        md: `calc(100% - 260px)`,
+                      },
+                    }}
+                  >
+                    <Toolbar />
+                    <Suspense fallback={Loading}>
+                      <Routes>
+                        {/* Redirect to /tasks if logged in and trying to access /auth */}
+                        <Route
+                          path='/auth'
+                          element={token ? <Navigate to='/tasks' replace /> : <AuthPage />}
+                        />
+                        <Route
+                          path='/tasks'
+                          element={token ? <TasksPage /> : <Navigate to='/auth' replace />}
+                        />
+                        <Route
+                          path='/statistics'
+                          element={token ? <StatisticsPage /> : <Navigate to='/auth' replace />}
+                        />
+                        <Route
+                          path='/settings'
+                          element={token ? <SettingsPage /> : <Navigate to='/auth' replace />}
+                        />
+                        <Route path='/confirm/:emailToken' element={<ConfirmPage />} />
+                        <Route path='/reset' element={<ResetPasswordEmailPage />} />
+                        <Route path='/resetPassword/:emailToken' element={<ResetPasswordPage />} />
+                        <Route
+                          path='/'
+                          element={<Navigate to={token ? '/tasks' : '/auth'} replace />}
+                        />
+                      </Routes>
+                    </Suspense>
+                  </Box>
+                </Box>
               </LocalizationProvider>
             </ThemeProvider>
           </ListsContext.Provider>

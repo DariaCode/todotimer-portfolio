@@ -61,9 +61,21 @@ const Sidebar: React.FC = () => {
                 }
                 handleListItemClick(event, item.index);
               }}
+              sx={{
+                justifyContent: { xs: 'center', md: 'flex-start' },
+                px: 2.5,
+              }}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.text} />
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: { xs: 0, md: 3 },
+                  justifyContent: 'center',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} sx={{ display: { xs: 'none', md: 'block' } }} />
             </ListItemButton>
           </ListItem>
         ))}

@@ -10,7 +10,6 @@ import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 // Material-UI components (https://mui.com/).
 import CircularProgress from '@mui/material/CircularProgress';
-import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid2';
@@ -74,14 +73,11 @@ const StatisticsPage: React.FC = () => {
     <Box
       sx={{
         display: 'flex',
-        paddingTop: { xs: '1px', md: '84px' },
-        paddingLeft: { xs: '1px', md: '220px' },
         flexDirection: 'column',
       }}
     >
-      <CssBaseline />
       <Container maxWidth='md'>
-        <Typography component='h1' variant='h4' color='primary' gutterBottom>
+        <Typography component='h1' variant='h4' color='primary' gutterBottom sx={{ mt: 2 }}>
           Statistics
         </Typography>
         {isLoading ? (

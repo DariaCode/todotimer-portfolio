@@ -48,13 +48,14 @@ const AuthPage: React.FC = () => {
     const email = emailEl.current?.value || '';
     const password = passwordEl.current?.value || '';
 
-    if (email.trim().length === 0 || password.trim().length === 0) {
+    if (email.trim().length === 0 || (!isLogin && password.trim().length === 0)) {
       return;
     }
 
     // Mocking login for standalone local mode
     console.log(`${isLogin ? 'Login' : 'Signup'} requested for: ${email}`);
     context.login('local', 'local', HOUR_IN_MS, email);
+    navigate('/tasks');
   };
 
   return (
@@ -93,14 +94,14 @@ const AuthPage: React.FC = () => {
               autoComplete='email'
               type='email'
               inputRef={emailEl}
+              defaultValue='local@user.com'
             />
             <TextField
               variant='outlined'
               margin='normal'
-              required
               fullWidth
               name='password'
-              label='Password'
+              label='Password (optional in local mode)'
               type='password'
               id='password'
               autoComplete='current-password'
