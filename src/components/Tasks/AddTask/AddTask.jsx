@@ -20,8 +20,8 @@ export default function AddTask(props) {
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Box>
         <Button
-          variant="contained"
-          color="primary"
+          variant='contained'
+          color='primary'
           onClick={props.onConfirm}
           startIcon={<AddCircleOutlineIcon />}
           sx={{ minWidth: '128px', margin: 1 }}
@@ -29,8 +29,8 @@ export default function AddTask(props) {
         Add Task
         </Button>
         <Button
-          variant="outlined"
-          color="secondary"
+          variant='outlined'
+          color='secondary'
           onClick={props.onCancel}
           startIcon={<HighlightOffIcon />}
           sx={{ minWidth: '128px', margin: 1 }}

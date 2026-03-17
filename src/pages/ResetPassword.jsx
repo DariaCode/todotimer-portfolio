@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 // Material-UI components (https://mui.com/)
@@ -20,63 +20,63 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 const ResetPasswordPage = () => {
-    const { emailToken } = useParams();
-    const [isReset, setIsReset] = useState(false);
-    const [email, setEmail] = useState('');
-    const passwordEl = useRef();
+  const { emailToken } = useParams();
+  const [isReset, setIsReset] = useState(false);
+  const [email, setEmail] = useState('');
+  const passwordEl = useRef();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const passwordValue = passwordEl.current.value;
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const passwordValue = passwordEl.current.value;
 
-        if (passwordValue.trim().length === 0) {
-            return;
-        }
+    if (passwordValue.trim().length === 0) {
+      return;
+    }
 
-        console.log(`Resetting password with token: ${emailToken}`);
-        
-        setTimeout(() => {
-            setIsReset(true);
-            setEmail('local@user.com'); // Mocked email response
-            console.log("Password reset (local mock)");
-        }, 1000);
-    };
+    console.log(`Resetting password with token: ${emailToken}`);
 
-    return (
-        <Box sx={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            minHeight: '92vh' 
+    setTimeout(() => {
+      setIsReset(true);
+      setEmail('local@user.com'); // Mocked email response
+      console.log('Password reset (local mock)');
+    }, 1000);
+  };
+
+  return (
+        <Box sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          minHeight: '92vh',
         }}>
             <CssBaseline />
-            <Container component="main" maxWidth="xs">
-                <Box sx={{ 
-                    marginTop: 14, 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center' 
+            <Container component='main' maxWidth='xs'>
+                <Box sx={{
+                  marginTop: 14,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
                 }}>
                     <Avatar sx={{ margin: 1, backgroundColor: 'secondary.main' }}>
                         <LockOutlinedIcon />
                     </Avatar>
                     {!isReset ? (
-                        <Box component="form" sx={{ width: '100%', marginTop: 1 }} onSubmit={handleSubmit}>
+                        <Box component='form' sx={{ width: '100%', marginTop: 1 }} onSubmit={handleSubmit}>
                             <TextField
-                                variant="outlined"
-                                margin="normal"
+                                variant='outlined'
+                                margin='normal'
                                 required
                                 fullWidth
-                                name="password"
-                                label="Password"
-                                type="password"
-                                id="password"
-                                autoComplete="current-password"
+                                name='password'
+                                label='Password'
+                                type='password'
+                                id='password'
+                                autoComplete='current-password'
                                 inputRef={passwordEl} />
                             <Button
-                                type="submit"
+                                type='submit'
                                 fullWidth
-                                variant="contained"
-                                color="primary"
+                                variant='contained'
+                                color='primary'
                                 sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}>
                                 Reset Password
                             </Button>
@@ -84,19 +84,19 @@ const ResetPasswordPage = () => {
                     ) : (
                         <Box>
                             <Typography
-                                component="h2"
-                                variant="h5"
-                                color="primary"
+                                component='h2'
+                                variant='h5'
+                                color='primary'
                                 sx={{ paddingTop: 5.5, paddingBottom: 5.5 }}
                                 gutterBottom>
                                 Password for {email} has been successfully reset.
                             </Typography>
                             <Button
-                                variant="outlined"
-                                color="primary"
+                                variant='outlined'
+                                color='primary'
                                 fullWidth
                                 component={Link}
-                                to="/"
+                                to='/'
                                 sx={{ textDecoration: 'none', color: 'inherit', margin: (theme) => theme.spacing(3, 0, 2) }}
                             >
                                 Go to Homepage
@@ -106,7 +106,7 @@ const ResetPasswordPage = () => {
                 </Box>
             </Container>
         </Box>
-    );
+  );
 };
 
 export default ResetPasswordPage;

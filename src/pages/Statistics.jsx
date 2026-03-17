@@ -6,25 +6,25 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useEffect } from "react";
-import { today } from "../utils/dateUtils";
-import Overview from "../components/Statistics/Overview";
-import BarChart from "../components/Statistics/BarChart";
-import AreaChart from "../components/Statistics/AreaChart";
+import React, { useEffect, useState } from 'react';
+import { today } from '../utils/dateUtils';
+import Overview from '../components/Statistics/Overview';
+import BarChart from '../components/Statistics/BarChart';
+import AreaChart from '../components/Statistics/AreaChart';
 
 // (http://recharts.org/).
-import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
+import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
 
 // Material-UI components (https://mui.com/).
-import CircularProgress from "@mui/material/CircularProgress";
-import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import Grid from "@mui/material/Grid2";
-import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
+import CircularProgress from '@mui/material/CircularProgress';
+import CssBaseline from '@mui/material/CssBaseline';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid2';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
 
-const COLORS = ["#82b5f2", "#fd76a2"];
+const COLORS = ['#82b5f2', '#fd76a2'];
 
 const StatisticsPage = () => {
   const [tasks, setTasks] = useState([]);
@@ -33,16 +33,16 @@ const StatisticsPage = () => {
     complete: 0,
     incomplete: 0,
     overdue: 0,
-    total: 0
+    total: 0,
   });
 
   useEffect(() => {
     const fetchTasks = () => {
       setIsLoading(true);
       const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-      
+
       const processedTasks = savedTasks.map(task => {
-        if (task.date === "1970-01-01T00:00:00.000Z") {
+        if (task.date === '1970-01-01T00:00:00.000Z') {
           task.date = null;
         } else if (task.date) {
           task.date = new Date(task.date).toISOString();
@@ -54,7 +54,7 @@ const StatisticsPage = () => {
       const complete = processedTasks.filter(task => task.complete === true).length;
       const incomplete = total - complete;
       const overdue = processedTasks.filter(
-        task => task.date && task.date < today && task.complete === false
+        task => task.date && task.date < today && task.complete === false,
       ).length;
 
       setTasks(processedTasks);
@@ -62,7 +62,7 @@ const StatisticsPage = () => {
         complete,
         incomplete,
         overdue,
-        total
+        total,
       });
       setIsLoading(false);
     };
@@ -71,31 +71,31 @@ const StatisticsPage = () => {
   }, []);
 
   const pieData = [
-    { name: "Complete", value: stats.complete },
-    { name: "Incomplete", value: stats.incomplete }
+    { name: 'Complete', value: stats.complete },
+    { name: 'Incomplete', value: stats.incomplete },
   ];
 
   return (
-    <Box sx={{ 
-        display: "flex", 
-        paddingTop: { xs: "1px", md: "84px" }, 
-        paddingLeft: { xs: "1px", md: "220px" }, 
-        flexDirection: "column" 
+    <Box sx={{
+      display: 'flex',
+      paddingTop: { xs: '1px', md: '84px' },
+      paddingLeft: { xs: '1px', md: '220px' },
+      flexDirection: 'column',
     }}>
       <CssBaseline />
-      <Container maxWidth="md">
-        <Typography component="h1" variant="h4" color="primary" gutterBottom>
+      <Container maxWidth='md'>
+        <Typography component='h1' variant='h4' color='primary' gutterBottom>
           Statistics
         </Typography>
         {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: 10 }}>
-            <CircularProgress color="secondary" />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
+            <CircularProgress color='secondary' />
           </Box>
         ) : (
           <Grid container spacing={3}>
             <Grid size={12}>
               <Paper sx={{ padding: 1.5 }}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                <Typography component='h2' variant='h6' color='primary' gutterBottom>
                   Overview
                 </Typography>
                 <Grid container spacing={3}>
@@ -108,16 +108,16 @@ const StatisticsPage = () => {
                     />
                   </Grid>
                   <Grid size={{ xs: 12, md: 6, lg: 6 }}>
-                    <ResponsiveContainer width="100%" height={240}>
+                    <ResponsiveContainer width='100%' height={240}>
                       <PieChart>
                         <Pie
                           data={pieData}
                           label
                           innerRadius={60}
                           outerRadius={80}
-                          fill="#8884d8"
+                          fill='#8884d8'
                           paddingAngle={5}
-                          dataKey="value"
+                          dataKey='value'
                         >
                           {pieData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -132,7 +132,7 @@ const StatisticsPage = () => {
             </Grid>
             <Grid size={{ xs: 12, md: 6, lg: 6 }}>
               <Paper sx={{ padding: 1.5 }}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                <Typography component='h2' variant='h6' color='primary' gutterBottom>
                   Week Completion Rate
                 </Typography>
                 <BarChart tasks={tasks} />
@@ -140,7 +140,7 @@ const StatisticsPage = () => {
             </Grid>
             <Grid size={{ xs: 12, md: 6, lg: 6 }}>
               <Paper sx={{ padding: 1.5 }}>
-                <Typography component="h2" variant="h6" color="primary" gutterBottom>
+                <Typography component='h2' variant='h6' color='primary' gutterBottom>
                   Week Completion Curve
                 </Typography>
                 <AreaChart tasks={tasks} />

@@ -67,7 +67,7 @@ export default function DayLists(props) {
 
   return (
     <Box>
-      <List key="DayList" sx={{ padding: 1 }}>
+      <List key='DayList' sx={{ padding: 1 }}>
         <Typography sx={{ padding: (theme) => theme.spacing(2, 1, 1, 1), color: 'text.secondary' }}>
           {listTitle}
         </Typography>

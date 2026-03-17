@@ -42,13 +42,13 @@ const RepeatTask = React.forwardRef((props, ref) => {
 
   const handleStartDateChange = (date) => {
     if (date) {
-        setSelectedStartDate(new Date(date).toISOString());
+      setSelectedStartDate(new Date(date).toISOString());
     }
   };
 
   const handleEndDateChange = (date) => {
     if (date) {
-        setSelectedEndDate(new Date(date).toISOString());
+      setSelectedEndDate(new Date(date).toISOString());
     }
   };
 
@@ -97,63 +97,63 @@ const RepeatTask = React.forwardRef((props, ref) => {
         ref={ref}
         value={dateArray}
       >
-        <LoopIcon color={dateArray ? "primary" : "inherit"} />
+        <LoopIcon color={dateArray ? 'primary' : 'inherit'} />
       </IconButton>
-      <Popper 
-        id={id} 
-        open={open} 
-        anchorEl={anchorEl} 
+      <Popper
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
         sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
       >
         <Paper elevation={3}>
             <Box sx={{ display: 'flex', flexDirection: 'column', padding: 1, gap: 1 }}>
               <DatePicker
-                label="Start"
+                label='Start'
                 value={new Date(selectedStartDate)}
                 onChange={handleStartDateChange}
                 slotProps={{ textField: { variant: 'outlined', fullWidth: true } }}
               />
               <DatePicker
-                label="End by"
+                label='End by'
                 value={new Date(selectedEndDate)}
                 onChange={handleEndDateChange}
                 slotProps={{ textField: { variant: 'outlined', fullWidth: true } }}
               />
               <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
-                <Button variant="outlined" onClick={() => handleQuickRepeat('day')} color="primary" sx={{ minWidth: 121 }}>
+                <Button variant='outlined' onClick={() => handleQuickRepeat('day')} color='primary' sx={{ minWidth: 121 }}>
                   Daily
                 </Button>
-                <Button variant="outlined" onClick={() => handleQuickRepeat('week')} color="primary" sx={{ minWidth: 121 }}>
+                <Button variant='outlined' onClick={() => handleQuickRepeat('week')} color='primary' sx={{ minWidth: 121 }}>
                   Weekly
                 </Button>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
-                <Button variant="outlined" onClick={() => handleQuickRepeat('month')} color="primary" sx={{ minWidth: 121 }}>
+                <Button variant='outlined' onClick={() => handleQuickRepeat('month')} color='primary' sx={{ minWidth: 121 }}>
                   Monthly
                 </Button>
-                <Button variant="outlined" onClick={() => handleQuickRepeat('year')} color="primary" sx={{ minWidth: 121 }}>
+                <Button variant='outlined' onClick={() => handleQuickRepeat('year')} color='primary' sx={{ minWidth: 121 }}>
                   Yearly
                 </Button>
               </Box>
-              <Button variant="outlined" onClick={handleCustom} color="primary" sx={{ minWidth: 121 }}>
+              <Button variant='outlined' onClick={handleCustom} color='primary' sx={{ minWidth: 121 }}>
                   Set Custom
               </Button>
               {custom && (
                 <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                     <TextField
-                      label="Every"
-                      type="number"
+                      label='Every'
+                      type='number'
                       value={frequencyK}
                       onChange={handleFrequencyK}
-                      variant="outlined"
+                      variant='outlined'
                       sx={{ maxWidth: 121 }}
                     />
-                    <FormControl variant="outlined" sx={{ minWidth: 121 }}>
+                    <FormControl variant='outlined' sx={{ minWidth: 121 }}>
                       <InputLabel>Set Repeat</InputLabel>
                       <Select
                         value={frequencyN}
                         onChange={handleFrequencyN}
-                        label="Set Repeat"
+                        label='Set Repeat'
                       >
                         <MenuItem value={'day'}>Day</MenuItem>
                         <MenuItem value={'week'}>Week</MenuItem>
@@ -164,10 +164,10 @@ const RepeatTask = React.forwardRef((props, ref) => {
                 </Box>
               )}
               <Box sx={{ display: 'flex', justifyContent: 'space-evenly', gap: 1 }}>
-                <Button onClick={handleOk} variant="contained" color="primary" sx={{ minWidth: 121 }}>
+                <Button onClick={handleOk} variant='contained' color='primary' sx={{ minWidth: 121 }}>
                   Ok
                 </Button>
-                <Button onClick={handleClear} variant="outlined" color="secondary" sx={{ minWidth: 121 }}>
+                <Button onClick={handleClear} variant='outlined' color='secondary' sx={{ minWidth: 121 }}>
                   Clear
                 </Button>
               </Box>

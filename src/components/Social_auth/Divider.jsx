@@ -14,11 +14,11 @@ import Box from '@mui/material/Box';
 
 export default function MyDivider() {
   return (
-    <Box sx={{ 
-        display: 'flex', 
-        flexDirection: 'row', 
-        justifyContent: 'center', 
-        alignItems: 'center' 
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
     }}>
       <Divider
         sx={{ height: '1px', width: '150px' }}

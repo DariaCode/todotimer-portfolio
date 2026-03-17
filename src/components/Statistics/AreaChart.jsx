@@ -7,16 +7,16 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
-import { localDates, formatWithOrdinal } from '../../utils/dateUtils';
+import { formatWithOrdinal, localDates } from '../../utils/dateUtils';
 
 import {
-  AreaChart,
   Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
 
 import { format, parseISO } from 'date-fns';
@@ -40,7 +40,7 @@ export default function Overview(props) {
   for (let i = 0; i < 7; i++) {
     const dateStr = localDates[i];
     const tasksForDay = lists[dateStr] || [];
-    
+
     // Use centralized helper for the label (e.g., 17th)
     const label = formatWithOrdinal(dateStr);
 
@@ -50,12 +50,12 @@ export default function Overview(props) {
       const total = tasksForDay.length;
       const complete = tasksForDay.filter(task => task.complete).length;
       const incomplete = total - complete;
-      areaData.push({ date: label, complete: complete, incomplete: incomplete });
+      areaData.push({ date: label, complete, incomplete });
     }
   }
 
   return (
-    <ResponsiveContainer width="95%" height={280}>
+    <ResponsiveContainer width='95%' height={280}>
       <AreaChart
         data={areaData}
         margin={{
@@ -64,22 +64,22 @@ export default function Overview(props) {
           left: 5,
           bottom: 30,
         }}>
-        <CartesianGrid vertical={false} strokeDasharray="3 3"/>
-        <XAxis dataKey="date"/>
+        <CartesianGrid vertical={false} strokeDasharray='3 3'/>
+        <XAxis dataKey='date'/>
         <YAxis/>
         <Tooltip/>
         <Area
           type='monotoneX'
-          dataKey="complete"
-          stackId="1"
-          stroke="#3B8BEB"
-          fill="#3B8BEB"/>
+          dataKey='complete'
+          stackId='1'
+          stroke='#3B8BEB'
+          fill='#3B8BEB'/>
         <Area
           type='monotoneX'
-          dataKey="incomplete"
-          stackId="1"
-          stroke="#FC3C7B"
-          fill="#FC3C7B"/>
+          dataKey='incomplete'
+          stackId='1'
+          stroke='#FC3C7B'
+          fill='#FC3C7B'/>
       </AreaChart>
     </ResponsiveContainer>);
 }

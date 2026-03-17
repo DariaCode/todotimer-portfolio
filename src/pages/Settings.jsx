@@ -6,22 +6,22 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useRef, useContext } from "react";
-import AuthContext from "../context/auth-context";
-import DeleteModal from "../components/Modal/DeleteUserModal";
+import React, { useContext, useRef, useState } from 'react';
+import AuthContext from '../context/auth-context';
+import DeleteModal from '../components/Modal/DeleteUserModal';
 
 // Material-UI components (https://mui.com/).
-import CssBaseline from "@mui/material/CssBaseline";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import CircularProgress from "@mui/material/CircularProgress";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid2";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Alert from "@mui/material/Alert";
-import Snackbar from "@mui/material/Snackbar";
-import Box from "@mui/material/Box";
+import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid2';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import Box from '@mui/material/Box';
 
 const SettingsPage = () => {
   const context = useContext(AuthContext);
@@ -30,10 +30,10 @@ const SettingsPage = () => {
   const [deleting, setDeleting] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorPassword, setErrorPassword] = useState("");
+  const [errorEmail, setErrorEmail] = useState('');
+  const [errorPassword, setErrorPassword] = useState('');
   const [showSuccessMsgs, setShowSuccessMsgs] = useState(false);
-  const [successMsgs, setSuccessMsgs] = useState("");
+  const [successMsgs, setSuccessMsgs] = useState('');
 
   const newEmailEl = useRef();
   const confEmailEl = useRef();
@@ -61,12 +61,12 @@ const SettingsPage = () => {
     if (newEmail !== confEmail) {
       setErrorEmail("Your confirmation email doesn't match your new email. Please try again.");
     } else if (newEmail === context.email) {
-      setErrorEmail("This email address is already registered.");
+      setErrorEmail('This email address is already registered.');
     } else if (curPassword.length < 1) {
-      setErrorEmail("Please enter your current password.");
+      setErrorEmail('Please enter your current password.');
     } else {
-      setErrorEmail("");
-      setSuccessMsgs("Email successfully changed (Saved Locally)!");
+      setErrorEmail('');
+      setSuccessMsgs('Email successfully changed (Saved Locally)!');
       setShowSuccessMsgs(true);
       setChangeEmail(false);
       context.login('local', 'local', 3600, newEmail);
@@ -78,10 +78,10 @@ const SettingsPage = () => {
     const newPassword = newPasswordEl.current.value;
 
     if (curPassword.length < 1 || newPassword.length < 1) {
-      setErrorPassword("Please fill in both password fields.");
+      setErrorPassword('Please fill in both password fields.');
     } else {
-      setErrorPassword("");
-      setSuccessMsgs("Password successfully changed (Saved Locally)!");
+      setErrorPassword('');
+      setSuccessMsgs('Password successfully changed (Saved Locally)!');
       setShowSuccessMsgs(true);
       setChangePassword(false);
     }
@@ -95,171 +95,105 @@ const SettingsPage = () => {
   const handleCancelForm = () => {
     setChangeEmail(false);
     setChangePassword(false);
-    setErrorEmail("");
-    setErrorPassword("");
+    setErrorEmail('');
+    setErrorPassword('');
   };
 
   const handleCloseSnackbar = () => {
-    setSuccessMsgs("");
+    setSuccessMsgs('');
     setShowSuccessMsgs(false);
   };
 
   return (
-    <Box sx={{ 
-        display: "flex", 
-        paddingTop: { xs: "1px", md: "84px" }, 
-        paddingLeft: { xs: "1px", md: "220px" }, 
-        flexDirection: "column" 
+    <Box sx={{
+      display: 'flex',
+      paddingTop: { xs: '1px', md: '84px' },
+      paddingLeft: { xs: '1px', md: '220px' },
+      flexDirection: 'column',
     }}>
       <CssBaseline />
-      <Container maxWidth="md">
-        <Typography component="h1" variant="h4" color="primary" gutterBottom>
+      <Container maxWidth='md'>
+        <Typography component='h1' variant='h4' color='primary' gutterBottom>
           Settings
         </Typography>
         {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", paddingTop: 10 }}>
-            <CircularProgress color="secondary" />
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
+            <CircularProgress color='secondary' />
           </Box>
         ) : (
           <Paper sx={{ padding: 2.5 }}>
-            <Typography component="h2" variant="h6" color="primary" gutterBottom>
+            <Typography component='h2' variant='h6' color='primary' gutterBottom>
               Profile
             </Typography>
             <Box sx={{ padding: 3 }}>
-              <Grid container direction="row" justifyContent="flex-start" spacing={1}>
-                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: "flex", alignItems: "center" }}>
+              <Grid container direction='row' justifyContent='flex-start' spacing={1}>
+                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography>Email</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, lg: 10 }}>
                   {changeEmail ? (
-                    <Box sx={{ maxWidth: "350px" }}>
+                    <Box sx={{ maxWidth: '350px' }}>
                       {errorEmail && (
-                        <Alert severity="error" sx={{ mb: 1 }}>
+                        <Alert severity='error' sx={{ mb: 1 }}>
                           {errorEmail}
                         </Alert>
                       )}
                       <TextField
-                        variant="outlined"
-                        margin="dense"
+                        variant='outlined'
+                        margin='dense'
                         required
                         fullWidth
-                        label="New Email"
-                        type="email"
-                        size="small"
+                        label='New Email'
+                        type='email'
+                        size='small'
                         inputRef={newEmailEl}
                       />
                       <TextField
-                        variant="outlined"
-                        margin="dense"
+                        variant='outlined'
+                        margin='dense'
                         required
                         fullWidth
-                        label="Confirm Email"
-                        type="email"
-                        size="small"
+                        label='Confirm Email'
+                        type='email'
+                        size='small'
                         inputRef={confEmailEl}
                       />
                       <TextField
-                        variant="outlined"
-                        margin="dense"
+                        variant='outlined'
+                        margin='dense'
                         required
                         fullWidth
-                        label="Current Password"
-                        type="password"
-                        size="small"
+                        label='Current Password'
+                        type='password'
+                        size='small'
                         inputRef={curPasswordEl}
                       />
-                      <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
                         <Button
-                          variant="contained"
-                          color="primary"
+                          variant='contained'
+                          color='primary'
                           onClick={confirmNewEmail}
-                          sx={{ minWidth: "128px", m: 1 }}
+                          sx={{ minWidth: '128px', m: 1 }}
                         >
                           Ok
                         </Button>
                         <Button
-                          variant="outlined"
-                          color="secondary"
+                          variant='outlined'
+                          color='secondary'
                           onClick={handleCancelForm}
-                          sx={{ minWidth: "128px", m: 1 }}
+                          sx={{ minWidth: '128px', m: 1 }}
                         >
                           Cancel
                         </Button>
                       </Box>
                     </Box>
                   ) : (
-                    <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+                    <Grid container direction='row' justifyContent='flex-start' alignItems='center'>
                       <Typography>{context.email || 'local@user.com'}</Typography>
                       <Button
-                        color="primary"
+                        color='primary'
                         onClick={handleChangeEmail}
-                        sx={{ minWidth: "128px", ml: 1 }}
-                      >
-                        Change
-                      </Button>
-                    </Grid>
-                  )}
-                </Grid>
-              </Grid>
-              
-              <Grid container direction="row" justifyContent="flex-start" spacing={1} sx={{ mt: 2 }}>
-                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: "flex", alignItems: "center" }}>
-                  <Typography>Password</Typography>
-                </Grid>
-                <Grid size={{ xs: 12, lg: 10 }}>
-                  {changePassword ? (
-                    <Box sx={{ maxWidth: "350px" }}>
-                      {errorPassword && (
-                        <Alert severity="error" sx={{ mb: 1 }}>
-                          {errorPassword}
-                        </Alert>
-                      )}
-                      <TextField
-                        variant="outlined"
-                        margin="dense"
-                        required
-                        fullWidth
-                        label="Current Password"
-                        type="password"
-                        size="small"
-                        inputRef={curPasswordEl}
-                      />
-                      <TextField
-                        variant="outlined"
-                        margin="dense"
-                        required
-                        fullWidth
-                        label="New Password"
-                        type="password"
-                        size="small"
-                        inputRef={newPasswordEl}
-                      />
-                      <Box sx={{ display: "flex", justifyContent: "center", mt: 1 }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={confirmNewPassword}
-                          sx={{ minWidth: "128px", m: 1 }}
-                        >
-                          Ok
-                        </Button>
-                        <Button
-                          variant="outlined"
-                          color="secondary"
-                          onClick={handleCancelForm}
-                          sx={{ minWidth: "128px", m: 1 }}
-                        >
-                          Cancel
-                        </Button>
-                      </Box>
-                    </Box>
-                  ) : (
-                    <Grid container direction="row" justifyContent="flex-start" alignItems="center">
-                      <Typography>●●●●●●</Typography>
-                      <Button
-                        color="primary"
-                        onClick={handleChangePassword}
-                        sx={{ minWidth: "128px", ml: 1 }}
+                        sx={{ minWidth: '128px', ml: 1 }}
                       >
                         Change
                       </Button>
@@ -268,12 +202,78 @@ const SettingsPage = () => {
                 </Grid>
               </Grid>
 
-              <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+              <Grid container direction='row' justifyContent='flex-start' spacing={1} sx={{ mt: 2 }}>
+                <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Typography>Password</Typography>
+                </Grid>
+                <Grid size={{ xs: 12, lg: 10 }}>
+                  {changePassword ? (
+                    <Box sx={{ maxWidth: '350px' }}>
+                      {errorPassword && (
+                        <Alert severity='error' sx={{ mb: 1 }}>
+                          {errorPassword}
+                        </Alert>
+                      )}
+                      <TextField
+                        variant='outlined'
+                        margin='dense'
+                        required
+                        fullWidth
+                        label='Current Password'
+                        type='password'
+                        size='small'
+                        inputRef={curPasswordEl}
+                      />
+                      <TextField
+                        variant='outlined'
+                        margin='dense'
+                        required
+                        fullWidth
+                        label='New Password'
+                        type='password'
+                        size='small'
+                        inputRef={newPasswordEl}
+                      />
+                      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                        <Button
+                          variant='contained'
+                          color='primary'
+                          onClick={confirmNewPassword}
+                          sx={{ minWidth: '128px', m: 1 }}
+                        >
+                          Ok
+                        </Button>
+                        <Button
+                          variant='outlined'
+                          color='secondary'
+                          onClick={handleCancelForm}
+                          sx={{ minWidth: '128px', m: 1 }}
+                        >
+                          Cancel
+                        </Button>
+                      </Box>
+                    </Box>
+                  ) : (
+                    <Grid container direction='row' justifyContent='flex-start' alignItems='center'>
+                      <Typography>●●●●●●</Typography>
+                      <Button
+                        color='primary'
+                        onClick={handleChangePassword}
+                        sx={{ minWidth: '128px', ml: 1 }}
+                      >
+                        Change
+                      </Button>
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
+
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <Button
-                  variant="outlined"
-                  color="secondary"
+                  variant='outlined'
+                  color='secondary'
                   onClick={handleDeleteUser}
-                  sx={{ minWidth: "128px" }}
+                  sx={{ minWidth: '128px' }}
                 >
                   Delete Account
                 </Button>
@@ -289,8 +289,8 @@ const SettingsPage = () => {
         onClose={handleCloseSnackbar}
       >
         <Alert
-          variant="outlined"
-          severity="success"
+          variant='outlined'
+          severity='success'
           onClose={handleCloseSnackbar}
           sx={{ width: '100%' }}
         >

@@ -7,16 +7,16 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React from 'react';
 
-import { localDates, formatWithOrdinal } from '../../utils/dateUtils';
+import { formatWithOrdinal, localDates } from '../../utils/dateUtils';
 
 import {
-  BarChart,
   Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
 } from 'recharts';
 
 import { format, parseISO } from 'date-fns';
@@ -24,7 +24,7 @@ import { format, parseISO } from 'date-fns';
 // eslint-disable-next-line require-jsdoc
 export default function Overview(props) {
   console.log('barChart', props.tasks);
-  
+
   // Divide tasks according to their date and completed status.
   const lists = props.tasks.reduce((acc, task) => {
     if (task.date) {
@@ -42,7 +42,7 @@ export default function Overview(props) {
   for (let i = 0; i < 7; i++) {
     const dateStr = localDates[i];
     const tasksForDay = lists[dateStr] || [];
-    
+
     // Use centralized helper for the label (e.g., 17th)
     const label = formatWithOrdinal(dateStr);
 
@@ -58,7 +58,7 @@ export default function Overview(props) {
   console.log('barData', barData);
 
   return (
-    <ResponsiveContainer width="95%" height={280}>
+    <ResponsiveContainer width='95%' height={280}>
       <BarChart
         data={barData}
         barGap={2}
@@ -70,18 +70,18 @@ export default function Overview(props) {
         }}
         barSize={30}>
         <XAxis
-          dataKey="date"
-          scale="point"
+          dataKey='date'
+          scale='point'
           padding={{
             left: 10,
             right: 10,
           }}/>
-        <YAxis label="%"/>
+        <YAxis label='%'/>
         <Tooltip/>
-        <CartesianGrid strokeDasharray="3 3"/>
+        <CartesianGrid strokeDasharray='3 3'/>
         <Bar
-          dataKey="complete"
-          fill="#82b5f2"
+          dataKey='complete'
+          fill='#82b5f2'
           background={{
             fill: '#fd76a2',
           }}/>

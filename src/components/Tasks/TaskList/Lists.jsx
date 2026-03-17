@@ -10,13 +10,13 @@ import React, { useContext } from 'react';
 import ListsContext from '../../../context/lists-context';
 
 import DayList from './DayList';
-import {todayDate, todayLocalDate,
-  weekLocalDate} from '../../../utils/dateUtils';
+import { todayDate, todayLocalDate,
+  weekLocalDate } from '../../../utils/dateUtils';
 
 const lists = (props) => {
   // Divide tasks according to their date and completed status.
   const lists = props.tasks.reduce((lists, task) => {
-    let date = task.date;
+    let { date } = task;
     if (task.complete) {
       date = 'Complete';
     }
@@ -61,7 +61,7 @@ const lists = (props) => {
     ;
   };
   const otherDate = listsGroups.filter((list) => list.date !== 'null' && list.date !== 'Overdue' && list.date !== 'Complete');
-  otherDate.sort(function(a, b) {
+  otherDate.sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
   if (otherDate) {

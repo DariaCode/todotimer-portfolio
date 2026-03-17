@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import AuthContext from '../context/auth-context';
 
 // Material-UI components (https://mui.com/)
@@ -14,11 +14,11 @@ import { styled } from '@mui/material/styles';
 import EditTaskModal from '../components/Modal/EditTaskModal';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
-import Lists from '../components/Tasks/TaskList/Lists'
+import Lists from '../components/Tasks/TaskList/Lists';
 import AddTask from '../components/Tasks/AddTask/AddTask';
 import PriorityPopper from '../components/Tasks/AddTask/Popper/Popper';
 import DatePicker from '../components/Tasks/AddTask/Pickers/DatePicker';
-import RepeatTask from '../components/Tasks/AddTask/Repeat/Repeat'
+import RepeatTask from '../components/Tasks/AddTask/Repeat/Repeat';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
@@ -26,229 +26,229 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from '@mui/material/Box';
 
 const RootBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    paddingTop: '64px',
-    flexDirection: 'column',
+  display: 'flex',
+  paddingTop: '64px',
+  flexDirection: 'column',
 }));
 
 const TaskViewBox = styled(Box)(({ theme }) => ({
-    maxWidth: '60vw',
-    padding: theme.spacing(3, 1),
-    [theme.breakpoints.down('md')]: {
-        maxWidth: '100vw',
-    },
+  maxWidth: '60vw',
+  padding: theme.spacing(3, 1),
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '100vw',
+  },
 }));
 
 const AddTaskIconsBox = styled('form')(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'row',
+  display: 'flex',
+  flexDirection: 'row',
 }));
 
 const SpinnerBox = styled(Box)(({ theme }) => ({
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: theme.spacing(10),
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingTop: theme.spacing(10),
 }));
 
 const TaskEditBox = styled('form')(({ theme }) => ({
-    display: 'flex',
+  display: 'flex',
 }));
 
 const TasksPage = () => {
-    const context = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
-    const [creating, setCreating] = useState(false);
-    const [updating, setUpdating] = useState(false);
-    const [tasks, setTasks] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [updatedTask, setUpdatedTask] = useState(null);
+  const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [updatedTask, setUpdatedTask] = useState(null);
 
-    const titleElRef = useRef();
-    const priorityElRef = useRef();
-    const dateElRef = useRef();
-    const dateRepeatElRef = useRef();
+  const titleElRef = useRef();
+  const priorityElRef = useRef();
+  const dateElRef = useRef();
+  const dateRepeatElRef = useRef();
 
-    useEffect(() => {
-        let isActive = true;
-        
-        const fetchTasks = () => {
-            setIsLoading(true);
-            const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-            if (isActive) {
-                setTasks(savedTasks);
-                setIsLoading(false);
-            }
+  useEffect(() => {
+    let isActive = true;
+
+    const fetchTasks = () => {
+      setIsLoading(true);
+      const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+      if (isActive) {
+        setTasks(savedTasks);
+        setIsLoading(false);
+      }
+    };
+
+    fetchTasks();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
+  const startCreateTaskHandler = () => {
+    setCreating(true);
+  };
+
+  const modalConfirmHandler = () => {
+    setCreating(false);
+    const title = titleElRef.current.value;
+    const priority = +priorityElRef.current.value;
+    let date = dateElRef.current.value;
+    const dateRepeatData = dateRepeatElRef.current.value.split(',');
+
+    let start = null;
+    let end = null;
+    let intervalK = null;
+    let intervalN = null;
+
+    if (dateRepeatData.length > 1) {
+      start = new Date(dateRepeatData[0]).toISOString();
+      end = new Date(dateRepeatData[1]).toISOString();
+      intervalK = parseInt(dateRepeatData[2]);
+      intervalN = dateRepeatData[3];
+      date = start;
+    }
+
+    if (title.trim().length === 0 || priority <= 0) {
+      return;
+    }
+
+    if (date.length === 0) {
+      date = null;
+    }
+
+    const newTask = {
+      _id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      title,
+      priority,
+      date: date || null,
+      complete: false,
+      start: start || null,
+      end: end || null,
+      intervalK: intervalK || null,
+      intervalN: intervalN || null,
+      creator: { _id: 'local' },
+    };
+
+    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    savedTasks.push(newTask);
+    localStorage.setItem('tasks', JSON.stringify(savedTasks));
+
+    setTasks(prevTasks => [...prevTasks, newTask]);
+    titleElRef.current.value = '';
+  };
+
+  const modalCancelHandler = () => {
+    setCreating(false);
+    setUpdating(false);
+    setUpdatedTask(null);
+  };
+
+  const startEditTaskHandler = taskId => {
+    setUpdating(true);
+    setUpdatedTask(taskId);
+  };
+
+  const editTaskHandler = () => {
+    setUpdating(false);
+    const taskId = updatedTask;
+    const title = titleElRef.current.value;
+    const priority = +priorityElRef.current.value;
+    let date = dateElRef.current.value;
+    const dateRepeatData = dateRepeatElRef.current.value.split(',');
+
+    let start = null;
+    let end = null;
+    let intervalK = null;
+    let intervalN = null;
+
+    if (dateRepeatData.length > 1) {
+      start = new Date(dateRepeatData[0]).toISOString();
+      end = new Date(dateRepeatData[1]).toISOString();
+      intervalK = parseInt(dateRepeatData[2]);
+      intervalN = dateRepeatData[3];
+      date = start;
+    }
+
+    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const taskIndex = savedTasks.findIndex(task => task._id === taskId);
+    if (taskIndex !== -1) {
+      savedTasks[taskIndex] = {
+        ...savedTasks[taskIndex],
+        title,
+        priority,
+        date: date || null,
+        start: start || null,
+        end: end || null,
+        intervalK: intervalK || null,
+        intervalN: intervalN || null,
+      };
+    }
+    localStorage.setItem('tasks', JSON.stringify(savedTasks));
+
+    setTasks(prevTasks => {
+      const updatedTasksList = [...prevTasks];
+      const idx = updatedTasksList.findIndex(task => task._id === taskId);
+      if (idx !== -1) {
+        updatedTasksList[idx] = {
+          ...updatedTasksList[idx],
+          title,
+          priority,
+          date: date || null,
+          start: start || null,
+          end: end || null,
+          intervalK: intervalK || null,
+          intervalN: intervalN || null,
         };
+      }
+      return updatedTasksList;
+    });
+    setUpdatedTask(null);
+  };
 
-        fetchTasks();
+  const completeTaskHandler = taskId => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const taskIndex = savedTasks.findIndex(task => task._id === taskId);
+    if (taskIndex !== -1) {
+      savedTasks[taskIndex].complete = !savedTasks[taskIndex].complete;
+    }
+    localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-        return () => {
-            isActive = false;
+    setTasks(prevTasks => {
+      const updatedTasksList = [...prevTasks];
+      const idx = updatedTasksList.findIndex(task => task._id === taskId);
+      if (idx !== -1) {
+        updatedTasksList[idx] = {
+          ...updatedTasksList[idx],
+          complete: !updatedTasksList[idx].complete,
         };
-    }, []);
+      }
+      return updatedTasksList;
+    });
+  };
 
-    const startCreateTaskHandler = () => {
-        setCreating(true);
-    };
+  const deleteTaskHandler = taskId => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
+      .filter(task => task._id !== taskId);
+    localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-    const modalConfirmHandler = () => {
-        setCreating(false);
-        const title = titleElRef.current.value;
-        const priority = +priorityElRef.current.value;
-        let date = dateElRef.current.value;
-        let dateRepeatData = dateRepeatElRef.current.value.split(",");
-        
-        let start = null;
-        let end = null;
-        let intervalK = null;
-        let intervalN = null;
+    setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
+  };
 
-        if (dateRepeatData.length > 1) {
-            start = new Date(dateRepeatData[0]).toISOString();
-            end = new Date(dateRepeatData[1]).toISOString();
-            intervalK = parseInt(dateRepeatData[2]);
-            intervalN = dateRepeatData[3];
-            date = start;
-        }
-
-        if (title.trim().length === 0 || priority <= 0) {
-            return;
-        }
-
-        if (date.length === 0) {
-            date = null;
-        }
-
-        const newTask = {
-            _id: Date.now().toString(36) + Math.random().toString(36).substr(2),
-            title,
-            priority,
-            date: date || null,
-            complete: false,
-            start: start || null,
-            end: end || null,
-            intervalK: intervalK || null,
-            intervalN: intervalN || null,
-            creator: { _id: 'local' }
-        };
-
-        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        savedTasks.push(newTask);
-        localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        
-        setTasks(prevTasks => [...prevTasks, newTask]);
-        titleElRef.current.value = '';
-    };
-
-    const modalCancelHandler = () => {
-        setCreating(false);
-        setUpdating(false);
-        setUpdatedTask(null);
-    };
-
-    const startEditTaskHandler = taskId => {
-        setUpdating(true);
-        setUpdatedTask(taskId);
-    };
-
-    const editTaskHandler = () => {
-        setUpdating(false);
-        const taskId = updatedTask;
-        const title = titleElRef.current.value;
-        const priority = +priorityElRef.current.value;
-        let date = dateElRef.current.value;
-        let dateRepeatData = dateRepeatElRef.current.value.split(",");
-        
-        let start = null;
-        let end = null;
-        let intervalK = null;
-        let intervalN = null;
-
-        if (dateRepeatData.length > 1) {
-            start = new Date(dateRepeatData[0]).toISOString();
-            end = new Date(dateRepeatData[1]).toISOString();
-            intervalK = parseInt(dateRepeatData[2]);
-            intervalN = dateRepeatData[3];
-            date = start;
-        }
-
-        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        const taskIndex = savedTasks.findIndex(task => task._id === taskId);
-        if (taskIndex !== -1) {
-            savedTasks[taskIndex] = { 
-                ...savedTasks[taskIndex], 
-                title, 
-                priority, 
-                date: date || null, 
-                start: start || null, 
-                end: end || null, 
-                intervalK: intervalK || null, 
-                intervalN: intervalN || null 
-            };
-        }
-        localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        
-        setTasks(prevTasks => {
-            const updatedTasksList = [...prevTasks];
-            const idx = updatedTasksList.findIndex(task => task._id === taskId);
-            if (idx !== -1) {
-                updatedTasksList[idx] = { 
-                    ...updatedTasksList[idx], 
-                    title, 
-                    priority, 
-                    date: date || null, 
-                    start: start || null, 
-                    end: end || null, 
-                    intervalK: intervalK || null, 
-                    intervalN: intervalN || null 
-                };
-            }
-            return updatedTasksList;
-        });
-        setUpdatedTask(null);
-    };
-
-    const completeTaskHandler = taskId => {
-        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-        const taskIndex = savedTasks.findIndex(task => task._id === taskId);
-        if (taskIndex !== -1) {
-            savedTasks[taskIndex].complete = !savedTasks[taskIndex].complete;
-        }
-        localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        
-        setTasks(prevTasks => {
-            const updatedTasksList = [...prevTasks];
-            const idx = updatedTasksList.findIndex(task => task._id === taskId);
-            if (idx !== -1) {
-                updatedTasksList[idx] = { 
-                    ...updatedTasksList[idx], 
-                    complete: !updatedTasksList[idx].complete 
-                };
-            }
-            return updatedTasksList;
-        });
-    };
-
-    const deleteTaskHandler = taskId => {
-        const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
-            .filter(task => task._id !== taskId);
-        localStorage.setItem('tasks', JSON.stringify(savedTasks));
-        
-        setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
-    };
-
-    return (
+  return (
         <React.Fragment>
             <RootBox>
                 <CssBaseline />
-                <Container maxWidth="sm">
+                <Container maxWidth='sm'>
                     <TaskViewBox>
                         <TextField
-                            id="outlined-basic"
-                            label="Add task"
-                            variant="outlined"
-                            size="medium"
+                            id='outlined-basic'
+                            label='Add task'
+                            variant='outlined'
+                            size='medium'
                             multiline
                             fullWidth
                             inputRef={titleElRef}
@@ -265,14 +265,14 @@ const TasksPage = () => {
                         </AddTask>}
 
                         {isLoading
-                            ? <SpinnerBox>
+                          ? <SpinnerBox>
                                 <CircularProgress
-                                    color="secondary" />
+                                    color='secondary' />
                             </SpinnerBox>
-                            : <Lists
+                          : <Lists
                                 tasks={tasks}
                                 authUserIdMain={context.userId}
-                                onViewDetailMain={() => {}} 
+                                onViewDetailMain={() => {}}
                                 onDeleteTaskMain={deleteTaskHandler}
                                 onEditTaskMain={startEditTaskHandler}
                                 onCompleteTaskMain={completeTaskHandler} />
@@ -283,13 +283,13 @@ const TasksPage = () => {
                 {updating && <EditTaskModal
                     onCancel={modalCancelHandler}
                     onConfirm={editTaskHandler}
-                    confirmText="confirm">
+                    confirmText='confirm'>
                     <TaskEditBox>
                         <TextField
-                            id="outlined-basic-edit"
-                            label="Edit task"
-                            variant="outlined"
-                            size="medium"
+                            id='outlined-basic-edit'
+                            label='Edit task'
+                            variant='outlined'
+                            size='medium'
                             multiline
                             fullWidth
                             inputRef={titleElRef} />
@@ -298,14 +298,14 @@ const TasksPage = () => {
                         <RepeatTask ref={dateRepeatElRef} />
                         <Box>
                             <IconButton onClick={() => deleteTaskHandler(updatedTask)}>
-                                <DeleteOutlineIcon color="secondary" />
+                                <DeleteOutlineIcon color='secondary' />
                             </IconButton>
                         </Box>
                     </TaskEditBox>
                 </EditTaskModal>}
             </RootBox>
         </React.Fragment>
-    );
+  );
 };
 
 export default TasksPage;

@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ListsContext from '../../context/lists-context';
 
@@ -36,10 +36,10 @@ export default function Sidebar() {
   };
 
   const navItems = [
-    { text: 'All Tasks', icon: <InboxIcon color="primary" />, index: 0, to: '/tasks' },
-    { text: 'Today', icon: <CalendarTodayIcon color="primary" />, index: 1, to: '/tasks' },
-    { text: 'Next 7 Days', icon: <DateRangeIcon color="primary" />, index: 2, to: '/tasks' },
-    { text: 'Statistics', icon: <AssessmentIcon color="primary" />, index: 3, to: '/statistics' },
+    { text: 'All Tasks', icon: <InboxIcon color='primary' />, index: 0, to: '/tasks' },
+    { text: 'Today', icon: <CalendarTodayIcon color='primary' />, index: 1, to: '/tasks' },
+    { text: 'Next 7 Days', icon: <DateRangeIcon color='primary' />, index: 2, to: '/tasks' },
+    { text: 'Statistics', icon: <AssessmentIcon color='primary' />, index: 3, to: '/statistics' },
     { text: 'Completed', icon: <AssignmentTurnedInIcon />, index: 4, to: '/tasks' },
     { text: 'Settings', icon: <SettingsIcon />, index: 5, to: '/settings' },
   ];
@@ -47,7 +47,7 @@ export default function Sidebar() {
   return (
     <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
       <CssBaseline />
-      <List component="nav">
+      <List component='nav'>
         {navItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton

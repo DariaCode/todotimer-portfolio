@@ -1,26 +1,33 @@
-import { format, addDays, subDays } from 'date-fns';
+import { addDays, format, subDays } from 'date-fns';
+
+const MOD_TEN = 10;
+const MOD_HUNDRED = 100;
+const ELEVEN = 11;
+const TWELVE = 12;
+const THIRTEEN = 13;
+const SEVEN_DAYS = 7;
 
 /**
  * Gets the ordinal suffix for a day of the month.
- * @param {number} day Day of the month (1-31)
- * @returns {string} The ordinal suffix (st, nd, rd, or th)
+ * @param day Day of the month (1-31)
+ * @returns The ordinal suffix (st, nd, rd, or th)
  */
-const getOrdinal = (day) => {
-  const lastDigit = day % 10;
-  const lastTwoDigits = day % 100;
-  
-  if (lastDigit === 1 && lastTwoDigits !== 11) return 'st';
-  if (lastDigit === 2 && lastTwoDigits !== 12) return 'nd';
-  if (lastDigit === 3 && lastTwoDigits !== 13) return 'rd';
+const getOrdinal = (day: number): string => {
+  const lastDigit = day % MOD_TEN;
+  const lastTwoDigits = day % MOD_HUNDRED;
+
+  if (lastDigit === 1 && lastTwoDigits !== ELEVEN) return 'st';
+  if (lastDigit === 2 && lastTwoDigits !== TWELVE) return 'nd';
+  if (lastDigit === 3 && lastTwoDigits !== THIRTEEN) return 'rd';
   return 'th';
 };
 
 /**
  * Formats a date with its day-of-month ordinal.
- * @param {Date|string} date The date to format
- * @returns {string} Formatted date like "17th"
+ * @param date The date to format
+ * @returns Formatted date like "17th"
  */
-const formatWithOrdinal = (date) => {
+const formatWithOrdinal = (date: Date | string): string => {
   const d = typeof date === 'string' ? new Date(date) : date;
   const day = d.getDate();
   return `${day}${getOrdinal(day)}`;
@@ -41,14 +48,14 @@ const tomorrow = tomorrowDateObj.toISOString();
 const tomorrowDate = format(tomorrowDateObj, 'yyyy-MM-dd');
 const tomorrowLocalDate = format(tomorrowDateObj, 'M/d/yyyy');
 
-const weekDateObj = addDays(now, 7);
+const weekDateObj = addDays(now, SEVEN_DAYS);
 const week = weekDateObj.toISOString();
 const weekDate = format(weekDateObj, 'yyyy-MM-dd');
 const weekLocalDate = format(weekDateObj, 'M/d/yyyy');
 
 // Last 7 days including today
-const localDateArr = [];
-for (let i = 0; i < 7; i++) {
+const localDateArr: string[] = [];
+for (let i = 0; i < SEVEN_DAYS; i++) {
   const day = subDays(now, i);
   localDateArr.push(format(day, 'M/d/yyyy'));
 }
@@ -56,10 +63,16 @@ for (let i = 0; i < 7; i++) {
 const localDates = localDateArr.reverse();
 
 export {
-  today, todayDate, todayLocalDate, 
-  tomorrow, tomorrowDate, tomorrowLocalDate, 
-  week, weekDate, weekLocalDate,
+  today,
+  todayDate,
+  todayLocalDate,
+  tomorrow,
+  tomorrowDate,
+  tomorrowLocalDate,
+  week,
+  weekDate,
+  weekLocalDate,
   localDates,
   getOrdinal,
-  formatWithOrdinal
+  formatWithOrdinal,
 };

@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 import React, { useState } from 'react';
-import { format, addDays, startOfToday } from 'date-fns';
+import { addDays, format, startOfToday } from 'date-fns';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';
@@ -31,8 +31,8 @@ const DatePicker = React.forwardRef((props, ref) => {
 
   const handleDateChange = (date) => {
     if (date) {
-        const formatDate = new Date(date).toISOString();
-        setSelectedDate(formatDate);
+      const formatDate = new Date(date).toISOString();
+      setSelectedDate(formatDate);
     }
   };
 
@@ -63,29 +63,29 @@ const DatePicker = React.forwardRef((props, ref) => {
         ref={ref}
         value={selectedDate}
       >
-        <DateRangeIcon color={selectedDate ? "primary" : "inherit"} />
+        <DateRangeIcon color={selectedDate ? 'primary' : 'inherit'} />
       </IconButton>
-      <Popper 
-        id={id} 
-        open={open} 
-        anchorEl={anchorEl} 
+      <Popper
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
         sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
       >
         <Paper elevation={3}>
             <Box sx={{ display: 'flex', flexDirection: 'column', padding: 1 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mb: 1 }}>
                 <Button
-                  variant="outlined"
+                  variant='outlined'
                   onClick={handleToday}
-                  color="primary"
+                  color='primary'
                   sx={{ minWidth: '121px' }}
                 >
                   Today
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant='outlined'
                   onClick={handleTomorrow}
-                  color="primary"
+                  color='primary'
                   sx={{ minWidth: '121px' }}
                 >
                   Tomorrow
@@ -96,22 +96,22 @@ const DatePicker = React.forwardRef((props, ref) => {
                 value={selectedDate ? new Date(selectedDate) : null}
                 onChange={handleDateChange}
                 slots={{
-                    actionBar: () => null // Hide default action bar as we have custom buttons
+                  actionBar: () => null, // Hide default action bar as we have custom buttons
                 }}
               />
               <Box sx={{ display: 'flex', justifyContent: 'space-evenly', mt: 1 }}>
                 <Button
-                  variant="contained"
+                  variant='contained'
                   onClick={handleOk}
-                  color="primary"
+                  color='primary'
                   sx={{ minWidth: '121px' }}
                 >
                   Ok
                 </Button>
                 <Button
-                  variant="outlined"
+                  variant='outlined'
                   onClick={handleClear}
-                  color="secondary"
+                  color='secondary'
                   sx={{ minWidth: '121px' }}
                 >
                   Clear

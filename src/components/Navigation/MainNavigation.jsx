@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import AuthContext from '../../context/auth-context';
 import Sidebar from '../Sidebar/Sidebar';
 
@@ -40,7 +40,7 @@ export default function MainNavigation(props) {
     <Box sx={{ display: 'flex', flexGrow: 1 }}>
       <CssBaseline />
       <AppBar
-        position="static"
+        position='static'
         sx={{
           zIndex: (theme) => theme.zIndex.drawer + 1,
           position: { md: 'fixed' },
@@ -49,9 +49,9 @@ export default function MainNavigation(props) {
         <Toolbar>
           {context.token && (
             <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="menu"
+              edge='start'
+              color='inherit'
+              aria-label='menu'
               onClick={handleDrawerToggle}
               sx={{
                 mr: 2,
@@ -61,12 +61,12 @@ export default function MainNavigation(props) {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography variant='h6' sx={{ flexGrow: 1 }}>
             Todo app
           </Typography>
           {!context.token && (
             <Button
-              color="inherit"
+              color='inherit'
               sx={{ textTransform: 'none' }}
             >
               Login
@@ -74,7 +74,7 @@ export default function MainNavigation(props) {
           )}
           {context.token && (
             <Button
-              color="inherit"
+              color='inherit'
               sx={{ textTransform: 'none' }}
               onClick={context.logout}
             >
@@ -85,17 +85,17 @@ export default function MainNavigation(props) {
       </AppBar>
       {context.token && (
         <Box
-          component="nav"
+          component='nav'
           sx={{
             width: { md: drawerWidth },
             flexShrink: { md: 0 },
           }}
-          aria-label="tasks folders"
+          aria-label='tasks folders'
         >
           {/* Mobile Drawer */}
           <Drawer
             container={container}
-            variant="temporary"
+            variant='temporary'
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
             open={mobileOpen}
             onClose={handleDrawerToggle}
@@ -111,7 +111,7 @@ export default function MainNavigation(props) {
           </Drawer>
           {/* Desktop Drawer */}
           <Drawer
-            variant="permanent"
+            variant='permanent'
             sx={{
               display: { xs: 'none', md: 'block' },
               '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },

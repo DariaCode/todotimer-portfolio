@@ -19,8 +19,8 @@ export default function EditTaskModal(props) {
     <Dialog
       open
       fullWidth
-      aria-labelledby="form-dialog-title">
-      <DialogTitle id="form-dialog-title">Edit Task</DialogTitle>
+      aria-labelledby='form-dialog-title'>
+      <DialogTitle id='form-dialog-title'>Edit Task</DialogTitle>
       <DialogContent>
         {props.children}
       </DialogContent>
@@ -31,14 +31,14 @@ export default function EditTaskModal(props) {
         }}>
         <Button
           onClick={props.onConfirm}
-          variant="contained"
-          color="primary">
+          variant='contained'
+          color='primary'>
             Confirm
         </Button>
         <Button
           onClick={props.onCancel}
-          variant="outlined"
-          color="secondary">
+          variant='outlined'
+          color='secondary'>
             Cancel
         </Button>
       </DialogActions>

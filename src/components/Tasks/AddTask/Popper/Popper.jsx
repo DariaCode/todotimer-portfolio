@@ -53,7 +53,7 @@ const PriorityPopper = React.forwardRef((props, ref) => {
   }
 
   return (
-    <Box className="form-control">
+    <Box className='form-control'>
       <IconButton
         aria-describedby={id}
         onClick={handleClick}
@@ -62,10 +62,10 @@ const PriorityPopper = React.forwardRef((props, ref) => {
       >
         {currentIcon}
       </IconButton>
-      <Popper 
-        id={id} 
-        open={open} 
-        anchorEl={anchorEl} 
+      <Popper
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
         sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
       >
         <Paper elevation={3}>

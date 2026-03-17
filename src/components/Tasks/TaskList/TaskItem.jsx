@@ -37,7 +37,7 @@ export default function TaskItem(props) {
     setAnchorEl(null);
   };
 
-  const priority = props.priority;
+  const { priority } = props;
 
   let currentIcon;
   switch (priority) {
@@ -48,10 +48,10 @@ export default function TaskItem(props) {
       currentIcon = <RadioButtonUncheckedIcon sx={{ color: yellow[500] }} />;
       break;
     case 4:
-      currentIcon = <RadioButtonUncheckedIcon color="secondary" />;
+      currentIcon = <RadioButtonUncheckedIcon color='secondary' />;
       break;
     default:
-      currentIcon = <RadioButtonUncheckedIcon color="action" />;
+      currentIcon = <RadioButtonUncheckedIcon color='action' />;
   };
 
   const options = {
@@ -62,8 +62,8 @@ export default function TaskItem(props) {
 
   return (
     <ListItem key={props.taskId} disablePadding sx={{ padding: 0 }}>
-      <Card 
-        variant="outlined"
+      <Card
+        variant='outlined'
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -86,8 +86,8 @@ export default function TaskItem(props) {
           {props.repeat !== null && (
              <IconButton disabled>
                <LoopIcon
-                 color="action"
-                 fontSize="small"
+                 color='action'
+                 fontSize='small'
                  sx={{ padding: 0.1 }}
                />
              </IconButton>
@@ -98,14 +98,14 @@ export default function TaskItem(props) {
             </Typography>
           )}
           <IconButton
-            aria-label="more"
-            aria-controls="long-menu"
-            aria-haspopup="true"
+            aria-label='more'
+            aria-controls='long-menu'
+            aria-haspopup='true'
             onClick={handleClick}>
             <MoreVertIcon/>
           </IconButton>
           <Menu
-            id="simple-menu"
+            id='simple-menu'
             anchorEl={anchorEl}
             keepMounted
             open={open}
@@ -117,25 +117,25 @@ export default function TaskItem(props) {
               },
             }}>
             <MenuItem
-              key="edit"
+              key='edit'
               onClick={() => {
                 handleClose();
                 props.onEdit(props.taskId);
               }}>
               <EditOutlinedIcon
                 sx={{ mr: 1.5 }}
-                color="action"/>
+                color='action'/>
               Edit
             </MenuItem>
             <MenuItem
-              key="delete"
+              key='delete'
               onClick={() => {
                 handleClose();
                 props.onDelete(props.taskId);
               }}>
               <DeleteOutlineIcon
                 sx={{ mr: 1.5 }}
-                color="action"/>
+                color='action'/>
               Delete
             </MenuItem>
           </Menu>

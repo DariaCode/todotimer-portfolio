@@ -6,7 +6,7 @@ Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 // Material-UI components (https://mui.com/)
@@ -21,60 +21,60 @@ import Box from '@mui/material/Box';
 import { green } from '@mui/material/colors';
 
 const ConfirmPage = () => {
-    const { emailToken } = useParams();
-    const [confirming, setConfirming] = useState(true);
+  const { emailToken } = useParams();
+  const [confirming, setConfirming] = useState(true);
 
-    useEffect(() => {
-        // Mocking the email confirmation process for standalone local mode
-        console.log(`Confirming email with token: ${emailToken}`);
-        
-        const timer = setTimeout(() => {
-            setConfirming(false);
-            console.log("Email confirmed (local mock)");
-        }, 1500);
+  useEffect(() => {
+    // Mocking the email confirmation process for standalone local mode
+    console.log(`Confirming email with token: ${emailToken}`);
 
-        return () => clearTimeout(timer);
-    }, [emailToken]);
+    const timer = setTimeout(() => {
+      setConfirming(false);
+      console.log('Email confirmed (local mock)');
+    }, 1500);
 
-    return (
-        <Box sx={{ 
-            display: 'flex', 
-            paddingTop: '124px', 
-            flexDirection: 'column' 
+    return () => clearTimeout(timer);
+  }, [emailToken]);
+
+  return (
+        <Box sx={{
+          display: 'flex',
+          paddingTop: '124px',
+          flexDirection: 'column',
         }}>
             <CssBaseline />
-            <Container maxWidth="md">
+            <Container maxWidth='md'>
                 {confirming ? (
-                    <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        paddingTop: 10 
+                    <Box sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      paddingTop: 10,
                     }}>
-                        <CircularProgress color="secondary" />
+                        <CircularProgress color='secondary' />
                     </Box>
                 ) : (
-                    <Paper sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        flexDirection: 'column', 
-                        padding: 5.5 
+                    <Paper sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      flexDirection: 'column',
+                      padding: 5.5,
                     }}>
                         <CheckCircleOutlineIcon sx={{ color: green[500], fontSize: 50 }} />
                         <Typography
-                            component="h2"
-                            variant="h5"
-                            color="primary"
+                            component='h2'
+                            variant='h5'
+                            color='primary'
                             sx={{ paddingTop: 5.5, paddingBottom: 5.5 }}
                             gutterBottom>
                             Your email has been confirmed!
                         </Typography>
-                        <Button 
-                            variant="outlined" 
-                            color="primary"
+                        <Button
+                            variant='outlined'
+                            color='primary'
                             component={Link}
-                            to="/"
+                            to='/'
                             sx={{ textDecoration: 'none', color: 'inherit' }}
                         >
                             Go to Homepage
@@ -83,7 +83,7 @@ const ConfirmPage = () => {
                 )}
             </Container>
         </Box>
-    );
+  );
 };
 
 export default ConfirmPage;
