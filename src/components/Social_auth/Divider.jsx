@@ -5,7 +5,7 @@ Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React from 'react';
+
 
 // Material-UI components (https://mui.com/)
 import Divider from '@mui/material/Divider';

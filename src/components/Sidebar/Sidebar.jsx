@@ -27,6 +27,11 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SettingsIcon from '@mui/icons-material/Settings';
 
+import {
+  LIST_INDEX_SETTINGS,
+  LIST_INDEX_STATISTICS,
+} from '../../utils/constants';
+
 export default function Sidebar() {
   const context = useContext(ListsContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -55,7 +60,10 @@ export default function Sidebar() {
               to={item.to}
               selected={selectedIndex === item.index}
               onClick={(event) => {
-                if (item.index !== 3 && item.index !== 5) {
+                if (
+                  item.index !== LIST_INDEX_STATISTICS &&
+                  item.index !== LIST_INDEX_SETTINGS
+                ) {
                   context.setListsOption(item.index);
                 }
                 handleListItemClick(event, item.index);

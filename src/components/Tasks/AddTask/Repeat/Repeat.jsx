@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RADIX_DEFAULT } from '../../../utils/constants';
+import { RADIX_DEFAULT } from '@/utils/constants';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';

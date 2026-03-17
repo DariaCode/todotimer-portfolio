@@ -1,8 +1,8 @@
 import React, { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthContext from '../context/auth-context';
-import MyDivider from '../components/Social_auth/Divider';
-import { HOUR_IN_MS } from '../utils/constants';
+import AuthContext from '@/context/auth-context';
+import MyDivider from '@/components/Social_auth/Divider';
+import { HOUR_IN_MS, UI_SPACING_DEFAULT } from '@/utils/constants';
 
 // Material-UI components (https://mui.com/)
 import Typography from '@mui/material/Typography';

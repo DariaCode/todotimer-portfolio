@@ -4,7 +4,7 @@ import {
   PRIORITY_LOW,
   PRIORITY_MEDIUM,
   PRIORITY_NORMAL,
-} from '../../../utils/constants';
+} from '@/utils/constants';
 
 // Material-UI components (https://mui.com/)
 import MenuItem from '@mui/material/MenuItem';

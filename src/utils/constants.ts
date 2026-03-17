@@ -15,6 +15,10 @@ export const MONTHS_IN_YEAR = 12;
 export const QUARTER_BASE = 3;
 
 // UI & Layout Constants
+export const LIST_INDEX_STATISTICS = 3;
+export const LIST_INDEX_SETTINGS = 5;
+
+export const UI_GUTTER_LARGE = 3;
 export const UI_SPACING_UNIT = 0.5;
 export const UI_SPACING_DEFAULT = 2;
 export const UI_SPACING_LARGE = 10;
@@ -41,6 +45,11 @@ export const LIST_OPTION_ALL = 0;
 export const LIST_OPTION_TODAY = 1;
 export const LIST_OPTION_WEEK = 2;
 export const LIST_OPTION_COMPLETED = 4;
+
+// Task Category Constants
+export const TASK_CATEGORY_COMPLETE = 'Complete';
+export const TASK_CATEGORY_OVERDUE = 'Overdue';
+export const TASK_CATEGORY_NULL = 'null';
 
 // Priority Levels
 export const PRIORITY_NORMAL = 1;

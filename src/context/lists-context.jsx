@@ -1,6 +1,8 @@
-import React from 'react';
+import { createContext } from 'react';
 
-export default React.createContext({
+const ListsContext = createContext({
   listsOption: null,
   setListsOption: (_option) => { /* No-op */ },
 });
+
+export default ListsContext;

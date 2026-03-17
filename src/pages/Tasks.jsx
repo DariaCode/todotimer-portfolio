@@ -93,43 +93,45 @@ const TasksPage = () => {
     setCreating(true);
   };
 
+  /**
+   * Processes the form refs to create or update a task data object.
+   * @returns {Object} Extracted task data
+   */
+  const getTaskData = () => {
+    const repeat = parseRepeatData(dateRepeatElRef.current.value);
+    const dateValue = dateElRef.current.value;
+
+    return {
+      title: titleElRef.current.value,
+      priority: +priorityElRef.current.value,
+      date: repeat?.date ?? (dateValue || null),
+      start: repeat?.start ?? null,
+      end: repeat?.end ?? null,
+      intervalK: repeat?.intervalK ?? null,
+      intervalN: repeat?.intervalN ?? null,
+    };
+  };
+
+  /**
+   * Handles task creation from the add task modal.
+   */
   const modalConfirmHandler = () => {
     setCreating(false);
-    const title = titleElRef.current.value;
-    const priority = +priorityElRef.current.value;
-    const repeatData = parseRepeatData(dateRepeatElRef.current.value);
+    const data = getTaskData();
 
-    let start = null;
-    let end = null;
-    let intervalK = null;
-    let intervalN = null;
-
-    if (repeatData) {
-      ({ start, end, intervalK, intervalN } = repeatData);
-    }
-
-    if (title.trim().length === 0 || priority <= 0) {
-      return;
-    }
+    if (!data.title.trim() || data.priority <= 0) return;
 
     const newTask = {
+      ...data,
       _id: generateTaskId(),
-      title,
-      priority,
-      date: (repeatData?.date || dateElRef.current.value) || null,
       complete: false,
-      start: start || null,
-      end: end || null,
-      intervalK: intervalK || null,
-      intervalN: intervalN || null,
       creator: { _id: 'local' },
     };
 
-    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    savedTasks.push(newTask);
-    localStorage.setItem('tasks', JSON.stringify(savedTasks));
+    const saved = JSON.parse(localStorage.getItem('tasks') || '[]');
+    localStorage.setItem('tasks', JSON.stringify([...saved, newTask]));
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setTasks((prev) => [...prev, newTask]);
     titleElRef.current.value = '';
   };
 
@@ -144,56 +146,21 @@ const TasksPage = () => {
     setUpdatedTask(taskId);
   };
 
+  /**
+   * Handles task updates from the edit task modal.
+   */
   const editTaskHandler = () => {
     setUpdating(false);
-    const taskId = updatedTask;
-    const title = titleElRef.current.value;
-    const priority = +priorityElRef.current.value;
-    const repeatData = parseRepeatData(dateRepeatElRef.current.value);
+    const data = getTaskData();
 
-    let date = dateElRef.current.value;
-    let start = null;
-    let end = null;
-    let intervalK = null;
-    let intervalN = null;
+    const saved = JSON.parse(localStorage.getItem('tasks') || '[]');
+    const idx = saved.findIndex((t) => t._id === updatedTask);
 
-    if (repeatData) {
-      ({ start, end, intervalK, intervalN, date } = repeatData);
+    if (idx !== -1) {
+      saved[idx] = { ...saved[idx], ...data };
+      localStorage.setItem('tasks', JSON.stringify(saved));
+      setTasks((prev) => prev.map((t) => (t._id === updatedTask ? { ...t, ...data } : t)));
     }
-
-    const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const taskIndex = savedTasks.findIndex((task) => task._id === taskId);
-    if (taskIndex !== -1) {
-      savedTasks[taskIndex] = {
-        ...savedTasks[taskIndex],
-        title,
-        priority,
-        date: date || null,
-        start: start || null,
-        end: end || null,
-        intervalK: intervalK || null,
-        intervalN: intervalN || null,
-      };
-    }
-    localStorage.setItem('tasks', JSON.stringify(savedTasks));
-
-    setTasks((prevTasks) => {
-      const updatedTasksList = [...prevTasks];
-      const idx = updatedTasksList.findIndex((task) => task._id === taskId);
-      if (idx !== -1) {
-        updatedTasksList[idx] = {
-          ...updatedTasksList[idx],
-          title,
-          priority,
-          date: date || null,
-          start: start || null,
-          end: end || null,
-          intervalK: intervalK || null,
-          intervalN: intervalN || null,
-        };
-      }
-      return updatedTasksList;
-    });
     setUpdatedTask(null);
   };
 

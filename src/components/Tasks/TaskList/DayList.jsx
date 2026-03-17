@@ -5,7 +5,6 @@ Updated: 03/2026 (MUI v6)
 Author: Daria Vodzinskaia
 Website: www.dariacode.dev
 -------------------------------------------------------  */
-import React from 'react';
 
 import TaskItem from './TaskItem';
 import { todayLocalDate, tomorrowLocalDate } from '../../../utils/dateUtils';

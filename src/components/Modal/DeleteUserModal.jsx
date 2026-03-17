@@ -1,10 +1,3 @@
-/* ----------------------------------------------------
-React.js / Delete user modal component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
 import React, { useContext, useRef, useState } from 'react';
 import AuthContext from '../../context/auth-context';
 
@@ -19,6 +12,7 @@ import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
+import { UI_GUTTER_LARGE, UI_SPACING_DEFAULT } from '@/utils/constants';
 
 const DeleteModal = (props) => {
   const { onCancel } = props;
@@ -86,7 +80,16 @@ const DeleteModal = (props) => {
           <Typography variant='body2'>I am sure I want to delete my account.</Typography>
         </Box>
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'flex-start', padding: (theme) => theme.spacing(2, 3, 3, 3) }}>
+      <DialogActions
+        sx={{
+          justifyContent: 'flex-start',
+          padding: (theme) => theme.spacing(
+            UI_SPACING_DEFAULT,
+            UI_GUTTER_LARGE,
+            UI_GUTTER_LARGE,
+            UI_GUTTER_LARGE,
+          ),
+        }}>
         <Button
           onClick={handleConfirm}
           variant='contained'

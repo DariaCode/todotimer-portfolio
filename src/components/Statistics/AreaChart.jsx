@@ -1,13 +1,5 @@
-/* ----------------------------------------------------
-React.js / Statistics areachart component
-
-Updated: 05/10/2020
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-import React from 'react';
-
 import { formatWithOrdinal, localDates } from '../../utils/dateUtils';
+import { DAYS_IN_WEEK } from '../../utils/constants';
 
 import {
   Area,
@@ -21,7 +13,11 @@ import {
 
 import { format, parseISO } from 'date-fns';
 
-// eslint-disable-next-line require-jsdoc
+/**
+ * AreaChart component for task statistics.
+ * @param {Object} props - Component properties.
+ * @returns {JSX.Element} The rendered AreaChart.
+ */
 export default function Overview(props) {
   // Divide tasks according to their date and completed status.
   const lists = props.tasks.reduce((acc, task) => {
@@ -37,7 +33,7 @@ export default function Overview(props) {
   }, {});
 
   const areaData = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < DAYS_IN_WEEK; i++) {
     const dateStr = localDates[i];
     const tasksForDay = lists[dateStr] || [];
 

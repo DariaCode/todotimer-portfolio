@@ -1,18 +1,10 @@
-/* ----------------------------------------------------
-React.js / Edit task modal component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-import React from 'react';
-
 // Material-UI components (https://mui.com/)
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import { UI_GUTTER_LARGE, UI_SPACING_DEFAULT } from '@/utils/constants';
 
 export default function EditTaskModal(props) {
   return (
@@ -27,7 +19,12 @@ export default function EditTaskModal(props) {
       <DialogActions
         sx={{
           justifyContent: 'flex-start',
-          padding: (theme) => theme.spacing(2, 3, 3, 3),
+          padding: (theme) => theme.spacing(
+            UI_SPACING_DEFAULT,
+            UI_GUTTER_LARGE,
+            UI_GUTTER_LARGE,
+            UI_GUTTER_LARGE,
+          ),
         }}>
         <Button
           onClick={props.onConfirm}
@@ -44,4 +41,4 @@ export default function EditTaskModal(props) {
       </DialogActions>
     </Dialog>
   );
-};
+}

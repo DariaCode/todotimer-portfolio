@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   PRIORITY_HIGH,
   PRIORITY_LOW,
   PRIORITY_MEDIUM,
   UI_GUTTER_BASE,
   UI_MENU_ITEM_GUTTER,
-} from '../../../utils/constants';
+} from '@/utils/constants';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';

@@ -7,8 +7,8 @@ Website: www.dariacode.dev
 -------------------------------------------------------  */
 
 import React, { useContext, useState } from 'react';
-import AuthContext from '../../context/auth-context';
-import Sidebar from '../Sidebar/Sidebar';
+import AuthContext from '@/context/auth-context';
+import Sidebar from '@/components/Sidebar/Sidebar';
 
 // Material-UI components (https://mui.com/)
 import { useTheme } from '@mui/material/styles';

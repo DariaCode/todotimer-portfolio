@@ -1,13 +1,5 @@
-/* ----------------------------------------------------
-React.js / Statistics barchart component
-
-Updated: 05/10/2020
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-import React from 'react';
-
 import { formatWithOrdinal, localDates } from '../../utils/dateUtils';
+import { DAYS_IN_WEEK, ORDINAL_MOD_HUNDRED } from '../../utils/constants';
 
 import {
   Bar,
@@ -21,10 +13,12 @@ import {
 
 import { format, parseISO } from 'date-fns';
 
-// eslint-disable-next-line require-jsdoc
+/**
+ * BarChart component for task statistics.
+ * @param {Object} props - Component properties.
+ * @returns {JSX.Element} The rendered BarChart.
+ */
 export default function Overview(props) {
-  console.log('barChart', props.tasks);
-
   // Divide tasks according to their date and completed status.
   const lists = props.tasks.reduce((acc, task) => {
     if (task.date) {
@@ -39,7 +33,7 @@ export default function Overview(props) {
   }, {});
 
   const barData = [];
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < DAYS_IN_WEEK; i++) {
     const dateStr = localDates[i];
     const tasksForDay = lists[dateStr] || [];
 
@@ -51,11 +45,10 @@ export default function Overview(props) {
     } else {
       const total = tasksForDay.length;
       const completeCount = tasksForDay.filter(task => task.complete).length;
-      const percentage = Math.floor((completeCount / total) * 100);
+      const percentage = Math.floor((completeCount / total) * ORDINAL_MOD_HUNDRED);
       barData.push({ date: label, complete: percentage });
     }
   }
-  console.log('barData', barData);
 
   return (
     <ResponsiveContainer width='95%' height={280}>
