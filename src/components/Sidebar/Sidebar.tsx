@@ -1,11 +1,3 @@
-/* ----------------------------------------------------
-React.js / Sidebar component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import ListsContext from '../../context/lists-context';
@@ -20,27 +12,31 @@ import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
 
 // Icons
-import InboxIcon from '@mui/icons-material/Inbox';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import DateRangeIcon from '@mui/icons-material/DateRange';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import InboxIcon from '@mui/icons-material/Inbox';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-import {
-  LIST_INDEX_SETTINGS,
-  LIST_INDEX_STATISTICS,
-} from '../../utils/constants';
+import { LIST_INDEX_SETTINGS, LIST_INDEX_STATISTICS } from '../../utils/constants';
 
-export default function Sidebar() {
+interface NavItem {
+  text: string;
+  icon: React.ReactNode;
+  index: number;
+  to: string;
+}
+
+const Sidebar: React.FC = () => {
   const context = useContext(ListsContext);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const handleListItemClick = (_event, index) => {
+  const handleListItemClick = (_event: React.SyntheticEvent, index: number) => {
     setSelectedIndex(index);
   };
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { text: 'All Tasks', icon: <InboxIcon color='primary' />, index: 0, to: '/tasks' },
     { text: 'Today', icon: <CalendarTodayIcon color='primary' />, index: 1, to: '/tasks' },
     { text: 'Next 7 Days', icon: <DateRangeIcon color='primary' />, index: 2, to: '/tasks' },
@@ -60,10 +56,7 @@ export default function Sidebar() {
               to={item.to}
               selected={selectedIndex === item.index}
               onClick={(event) => {
-                if (
-                  item.index !== LIST_INDEX_STATISTICS &&
-                  item.index !== LIST_INDEX_SETTINGS
-                ) {
+                if (item.index !== LIST_INDEX_STATISTICS && item.index !== LIST_INDEX_SETTINGS) {
                   context.setListsOption(item.index);
                 }
                 handleListItemClick(event, item.index);
@@ -77,4 +70,6 @@ export default function Sidebar() {
       </List>
     </Box>
   );
-}
+};
+
+export default Sidebar;

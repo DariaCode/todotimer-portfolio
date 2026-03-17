@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   PRIORITY_HIGH,
   PRIORITY_LOW,
@@ -17,19 +17,34 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // Icons
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import LoopIcon from '@mui/icons-material/Loop';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { green, yellow } from '@mui/material/colors';
 
-export default function TaskItem(props) {
-  const [anchorEl, setAnchorEl] = useState(null);
+interface TaskItemProps {
+  taskId: string;
+  title: string;
+  priority: number;
+  date: string;
+  complete: boolean;
+  repeat: string;
+  userId: string;
+  creatorId: string;
+  onDetail: (id: string) => void;
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+  onComplete: (id: string) => void;
+}
+
+const TaskItem: React.FC<TaskItemProps> = (props) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
 
-  const handleClick = (event) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -37,9 +52,9 @@ export default function TaskItem(props) {
     setAnchorEl(null);
   };
 
-  const { priority } = props;
+  const { priority, taskId, title, date, complete, repeat, onComplete, onEdit, onDelete } = props;
 
-  let currentIcon;
+  let currentIcon: React.ReactNode;
   switch (priority) {
     case PRIORITY_LOW:
       currentIcon = <RadioButtonUncheckedIcon sx={{ color: green[500] }} />;
@@ -54,14 +69,11 @@ export default function TaskItem(props) {
       currentIcon = <RadioButtonUncheckedIcon color='action' />;
   }
 
-  const options = {
-    month: 'short',
-    day: 'numeric',
-  };
-  const formatedDate = new Date(props.date).toLocaleDateString('en', options);
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const formattedDate = date ? new Date(date).toLocaleDateString('en', options) : null;
 
   return (
-    <ListItem key={props.taskId} disablePadding sx={{ padding: 0 }}>
+    <ListItem key={taskId} disablePadding sx={{ padding: 0 }}>
       <Card
         variant='outlined'
         sx={{
@@ -73,37 +85,26 @@ export default function TaskItem(props) {
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <IconButton onClick={() => props.onComplete(props.taskId)}>
-            {props.complete ? (
-              <CheckCircleIcon sx={{ color: green[500] }} />
-            ) : (
-              currentIcon
-            )}
+          <IconButton onClick={() => onComplete(taskId)}>
+            {complete ? <CheckCircleIcon sx={{ color: green[500] }} /> : currentIcon}
           </IconButton>
-          <Typography sx={{ display: 'inline' }}>
-            {props.title}
-          </Typography>
+          <Typography sx={{ display: 'inline' }}>{title}</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {props.repeat !== null && (
-             <IconButton disabled>
-               <LoopIcon
-                 color='action'
-                 fontSize='small'
-                 sx={{ padding: 0.1 }}
-               />
-             </IconButton>
+          {repeat !== null && (
+            <IconButton disabled>
+              <LoopIcon color='action' fontSize='small' sx={{ padding: 0.1 }} />
+            </IconButton>
           )}
-          {props.date !== null && (
-            <Typography sx={{ display: 'inline' }}>
-              {formatedDate}
-            </Typography>
+          {formattedDate !== null && (
+            <Typography sx={{ display: 'inline' }}>{formattedDate}</Typography>
           )}
           <IconButton
             aria-label='more'
             aria-controls='long-menu'
             aria-haspopup='true'
-            onClick={handleClick}>
+            onClick={handleClick}
+          >
             <MoreVertIcon />
           </IconButton>
           <Menu
@@ -117,27 +118,26 @@ export default function TaskItem(props) {
                 maxHeight: UI_MENU_ITEM_GUTTER * UI_GUTTER_BASE,
                 width: '15ch',
               },
-            }}>
+            }}
+          >
             <MenuItem
               key='edit'
               onClick={() => {
                 handleClose();
-                props.onEdit(props.taskId);
-              }}>
-              <EditOutlinedIcon
-                sx={{ mr: 1.5 }}
-                color='action' />
+                onEdit(taskId);
+              }}
+            >
+              <EditOutlinedIcon sx={{ mr: 1.5 }} color='action' />
               Edit
             </MenuItem>
             <MenuItem
               key='delete'
               onClick={() => {
                 handleClose();
-                props.onDelete(props.taskId);
-              }}>
-              <DeleteOutlineIcon
-                sx={{ mr: 1.5 }}
-                color='action' />
+                onDelete(taskId);
+              }}
+            >
+              <DeleteOutlineIcon sx={{ mr: 1.5 }} color='action' />
               Delete
             </MenuItem>
           </Menu>
@@ -145,4 +145,6 @@ export default function TaskItem(props) {
       </Card>
     </ListItem>
   );
-}
+};
+
+export default TaskItem;

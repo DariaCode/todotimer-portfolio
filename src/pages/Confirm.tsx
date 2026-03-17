@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import {
-  SHORT_FEEDBACK_DURATION,
-  UI_SPACING_DEFAULT,
-  UI_SPACING_LARGE,
-} from '../utils/constants';
+import { SHORT_FEEDBACK_DURATION, UI_SPACING_DEFAULT, UI_SPACING_LARGE } from '../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import CssBaseline from '@mui/material/CssBaseline';
@@ -17,8 +13,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import Box from '@mui/material/Box';
 import { green } from '@mui/material/colors';
 
-const ConfirmPage = () => {
-  const { emailToken } = useParams();
+const ConfirmPage: React.FC = () => {
+  const { emailToken } = useParams<{ emailToken: string }>();
   const [confirming, setConfirming] = useState(true);
 
   useEffect(() => {
@@ -34,37 +30,44 @@ const ConfirmPage = () => {
   }, [emailToken]);
 
   return (
-    <Box sx={{
-      display: 'flex',
-      paddingTop: '124px',
-      flexDirection: 'column',
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        paddingTop: '124px',
+        flexDirection: 'column',
+      }}
+    >
       <CssBaseline />
       <Container maxWidth='md'>
         {confirming ? (
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            paddingTop: UI_SPACING_LARGE,
-          }}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              paddingTop: UI_SPACING_LARGE,
+            }}
+          >
             <CircularProgress color='secondary' />
           </Box>
         ) : (
-          <Paper sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            padding: UI_SPACING_LARGE,
-          }}>
+          <Paper
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+              padding: UI_SPACING_LARGE,
+            }}
+          >
             <CheckCircleOutlineIcon sx={{ color: green[500], fontSize: 50 }} />
             <Typography
               component='h2'
               variant='h5'
               color='primary'
               sx={{ paddingTop: UI_SPACING_DEFAULT, paddingBottom: UI_SPACING_DEFAULT }}
-              gutterBottom>
+              gutterBottom
+            >
               Your email has been confirmed!
             </Typography>
             <Button

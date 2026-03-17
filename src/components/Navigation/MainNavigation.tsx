@@ -1,11 +1,3 @@
-/* ----------------------------------------------------
-React.js / Navigation component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useContext, useState } from 'react';
 import AuthContext from '@/context/auth-context';
 import Sidebar from '@/components/Sidebar/Sidebar';
@@ -24,7 +16,11 @@ import Box from '@mui/material/Box';
 
 const drawerWidth = 260;
 
-export default function MainNavigation(props) {
+interface MainNavigationProps {
+  window?: () => Window;
+}
+
+const MainNavigation: React.FC<MainNavigationProps> = (props) => {
   const { window } = props;
   const theme = useTheme();
   const context = useContext(AuthContext);
@@ -65,19 +61,12 @@ export default function MainNavigation(props) {
             Todo app
           </Typography>
           {!context.token && (
-            <Button
-              color='inherit'
-              sx={{ textTransform: 'none' }}
-            >
+            <Button color='inherit' sx={{ textTransform: 'none' }}>
               Login
             </Button>
           )}
           {context.token && (
-            <Button
-              color='inherit'
-              sx={{ textTransform: 'none' }}
-              onClick={context.logout}
-            >
+            <Button color='inherit' sx={{ textTransform: 'none' }} onClick={context.logout}>
               Logout
             </Button>
           )}
@@ -127,4 +116,6 @@ export default function MainNavigation(props) {
       )}
     </Box>
   );
-}
+};
+
+export default MainNavigation;

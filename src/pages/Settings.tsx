@@ -16,7 +16,7 @@ import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
 import Box from '@mui/material/Box';
 
-const SettingsPage = () => {
+const SettingsPage: React.FC = () => {
   const context = useContext(AuthContext);
 
   const [isLoading, _setIsLoading] = useState(false);
@@ -28,10 +28,10 @@ const SettingsPage = () => {
   const [showSuccessMsgs, setShowSuccessMsgs] = useState(false);
   const [successMsgs, setSuccessMsgs] = useState('');
 
-  const newEmailEl = useRef();
-  const confEmailEl = useRef();
-  const curPasswordEl = useRef();
-  const newPasswordEl = useRef();
+  const newEmailEl = useRef<HTMLInputElement>(null);
+  const confEmailEl = useRef<HTMLInputElement>(null);
+  const curPasswordEl = useRef<HTMLInputElement>(null);
+  const newPasswordEl = useRef<HTMLInputElement>(null);
 
   const handleDeleteUser = () => {
     setDeleting(true);
@@ -47,9 +47,9 @@ const SettingsPage = () => {
   };
 
   const confirmNewEmail = () => {
-    const newEmail = newEmailEl.current.value;
-    const confEmail = confEmailEl.current.value;
-    const curPassword = curPasswordEl.current.value;
+    const newEmail = newEmailEl.current?.value || '';
+    const confEmail = confEmailEl.current?.value || '';
+    const curPassword = curPasswordEl.current?.value || '';
 
     if (newEmail !== confEmail) {
       setErrorEmail("Your confirmation email doesn't match your new email. Please try again.");
@@ -67,8 +67,8 @@ const SettingsPage = () => {
   };
 
   const confirmNewPassword = () => {
-    const curPassword = curPasswordEl.current.value;
-    const newPassword = newPasswordEl.current.value;
+    const curPassword = curPasswordEl.current?.value || '';
+    const newPassword = newPasswordEl.current?.value || '';
 
     if (curPassword.length < 1 || newPassword.length < 1) {
       setErrorPassword('Please fill in both password fields.');
@@ -98,19 +98,23 @@ const SettingsPage = () => {
   };
 
   return (
-    <Box sx={{
-      display: 'flex',
-      paddingTop: { xs: '1px', md: '84px' },
-      paddingLeft: { xs: '1px', md: '220px' },
-      flexDirection: 'column',
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        paddingTop: { xs: '1px', md: '84px' },
+        paddingLeft: { xs: '1px', md: '220px' },
+        flexDirection: 'column',
+      }}
+    >
       <CssBaseline />
       <Container maxWidth='md'>
         <Typography component='h1' variant='h4' color='primary' gutterBottom>
           Settings
         </Typography>
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}
+          >
             <CircularProgress color='secondary' />
           </Box>
         ) : (
@@ -195,7 +199,13 @@ const SettingsPage = () => {
                 </Grid>
               </Grid>
 
-              <Grid container direction='row' justifyContent='flex-start' spacing={1} sx={{ mt: 2 }}>
+              <Grid
+                container
+                direction='row'
+                justifyContent='flex-start'
+                spacing={1}
+                sx={{ mt: 2 }}
+              >
                 <Grid size={{ xs: 12, lg: 2 }} sx={{ display: 'flex', alignItems: 'center' }}>
                   <Typography>Password</Typography>
                 </Grid>
@@ -276,11 +286,7 @@ const SettingsPage = () => {
         )}
       </Container>
       {deleting && <DeleteModal onCancel={closeModal} />}
-      <Snackbar
-        open={showSuccessMsgs}
-        autoHideDuration={8000}
-        onClose={handleCloseSnackbar}
-      >
+      <Snackbar open={showSuccessMsgs} autoHideDuration={8000} onClose={handleCloseSnackbar}>
         <Alert
           variant='outlined'
           severity='success'

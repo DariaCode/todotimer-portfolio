@@ -1,16 +1,9 @@
-/* ----------------------------------------------------
-React.js / Statistics page component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useEffect, useState } from 'react';
 import { today } from '../utils/dateUtils';
 import Overview from '../components/Statistics/Overview';
 import BarChart from '../components/Statistics/BarChart';
 import AreaChart from '../components/Statistics/AreaChart';
+import { type Task } from '../utils/taskUtils';
 
 // (http://recharts.org/).
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from 'recharts';
@@ -26,10 +19,17 @@ import Box from '@mui/material/Box';
 
 const COLORS = ['#82b5f2', '#fd76a2'];
 
-const StatisticsPage = () => {
-  const [tasks, setTasks] = useState([]);
+interface StatsState {
+  complete: number;
+  incomplete: number;
+  overdue: number;
+  total: number;
+}
+
+const StatisticsPage: React.FC = () => {
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<StatsState>({
     complete: 0,
     incomplete: 0,
     overdue: 0,
@@ -39,31 +39,26 @@ const StatisticsPage = () => {
   useEffect(() => {
     const fetchTasks = () => {
       setIsLoading(true);
-      const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+      const savedTasks: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]');
 
-      const processedTasks = savedTasks.map(task => {
+      const processedTasks = savedTasks.map((task) => {
         if (task.date === '1970-01-01T00:00:00.000Z') {
-          task.date = null;
+          return { ...task, date: null };
         } else if (task.date) {
-          task.date = new Date(task.date).toISOString();
+          return { ...task, date: new Date(task.date).toISOString() };
         }
         return task;
       });
 
       const total = processedTasks.length;
-      const complete = processedTasks.filter(task => task.complete === true).length;
+      const complete = processedTasks.filter((task) => task.complete === true).length;
       const incomplete = total - complete;
       const overdue = processedTasks.filter(
-        task => task.date && task.date < today && task.complete === false,
+        (task) => task.date && task.date < today && task.complete === false
       ).length;
 
       setTasks(processedTasks);
-      setStats({
-        complete,
-        incomplete,
-        overdue,
-        total,
-      });
+      setStats({ complete, incomplete, overdue, total });
       setIsLoading(false);
     };
 
@@ -76,19 +71,23 @@ const StatisticsPage = () => {
   ];
 
   return (
-    <Box sx={{
-      display: 'flex',
-      paddingTop: { xs: '1px', md: '84px' },
-      paddingLeft: { xs: '1px', md: '220px' },
-      flexDirection: 'column',
-    }}>
+    <Box
+      sx={{
+        display: 'flex',
+        paddingTop: { xs: '1px', md: '84px' },
+        paddingLeft: { xs: '1px', md: '220px' },
+        flexDirection: 'column',
+      }}
+    >
       <CssBaseline />
       <Container maxWidth='md'>
         <Typography component='h1' variant='h4' color='primary' gutterBottom>
           Statistics
         </Typography>
         {isLoading ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}>
+          <Box
+            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', paddingTop: 10 }}
+          >
             <CircularProgress color='secondary' />
           </Box>
         ) : (
@@ -119,7 +118,7 @@ const StatisticsPage = () => {
                           paddingAngle={5}
                           dataKey='value'
                         >
-                          {pieData.map((entry, index) => (
+                          {pieData.map((_entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>

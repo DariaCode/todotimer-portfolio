@@ -14,26 +14,29 @@ import Checkbox from '@mui/material/Checkbox';
 import Box from '@mui/material/Box';
 import { UI_GUTTER_LARGE, UI_SPACING_DEFAULT } from '@/utils/constants';
 
-const DeleteModal = (props) => {
-  const { onCancel } = props;
+interface DeleteModalProps {
+  onCancel: () => void;
+}
+
+const DeleteModal: React.FC<DeleteModalProps> = ({ onCancel }) => {
   const context = useContext(AuthContext);
 
   const [showError, setShowError] = useState('');
   const [checkOne, setCheckOne] = useState(false);
   const [checkTwo, setCheckTwo] = useState(false);
 
-  const emailEl = useRef();
+  const emailEl = useRef<HTMLInputElement>(null);
 
   const handleCheckBoxOne = () => {
-    setCheckOne(prev => !prev);
+    setCheckOne((prev) => !prev);
   };
 
   const handleCheckBoxTwo = () => {
-    setCheckTwo(prev => !prev);
+    setCheckTwo((prev) => !prev);
   };
 
   const handleConfirm = () => {
-    const emailInput = emailEl.current.value;
+    const emailInput = emailEl.current?.value || '';
     if (emailInput !== context.email) {
       setShowError('Email is incorrect');
     } else {
@@ -61,35 +64,28 @@ const DeleteModal = (props) => {
           inputRef={emailEl}
         />
         {showError && (
-          <Alert severity='error' sx={{ mb: 2 }}>{showError}</Alert>
+          <Alert severity='error' sx={{ mb: 2 }}>
+            {showError}
+          </Alert>
         )}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          <Checkbox
-            color='primary'
-            checked={checkOne}
-            onChange={handleCheckBoxOne}
-          />
-          <Typography variant='body2'>I am aware that deleting account will remove all my data.</Typography>
+          <Checkbox color='primary' checked={checkOne} onChange={handleCheckBoxOne} />
+          <Typography variant='body2'>
+            I am aware that deleting account will remove all my data.
+          </Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Checkbox
-            color='primary'
-            checked={checkTwo}
-            onChange={handleCheckBoxTwo}
-          />
+          <Checkbox color='primary' checked={checkTwo} onChange={handleCheckBoxTwo} />
           <Typography variant='body2'>I am sure I want to delete my account.</Typography>
         </Box>
       </DialogContent>
       <DialogActions
         sx={{
           justifyContent: 'flex-start',
-          padding: (theme) => theme.spacing(
-            UI_SPACING_DEFAULT,
-            UI_GUTTER_LARGE,
-            UI_GUTTER_LARGE,
-            UI_GUTTER_LARGE,
-          ),
-        }}>
+          padding: (theme) =>
+            theme.spacing(UI_SPACING_DEFAULT, UI_GUTTER_LARGE, UI_GUTTER_LARGE, UI_GUTTER_LARGE),
+        }}
+      >
         <Button
           onClick={handleConfirm}
           variant='contained'
@@ -98,11 +94,7 @@ const DeleteModal = (props) => {
         >
           Confirm
         </Button>
-        <Button
-          onClick={onCancel}
-          variant='outlined'
-          color='secondary'
-        >
+        <Button onClick={onCancel} variant='outlined' color='secondary'>
           Cancel
         </Button>
       </DialogActions>

@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import ListsContext from '@/context/lists-context';
 import DayList from './DayList';
 import { todayLocalDate, weekLocalDate } from '@/utils/dateUtils';
-import { groupTasksByCategory } from '@/utils/taskUtils';
+import { type Task, groupTasksByCategory } from '@/utils/taskUtils';
 import {
   LIST_OPTION_ALL,
   LIST_OPTION_COMPLETED,
@@ -13,19 +13,20 @@ import {
   TASK_CATEGORY_OVERDUE,
 } from '@/utils/constants';
 
+interface ListsProps {
+  tasks: Task[];
+  authUserIdMain: string;
+  onViewDetailMain: (id: string) => void;
+  onDeleteTaskMain: (id: string) => void;
+  onEditTaskMain: (id: string) => void;
+  onCompleteTaskMain: (id: string) => void;
+}
+
 /**
  * Renders a categorized list of tasks based on the current navigation selection.
  * Categorizes tasks by date, completed status, or overdue status.
- *
- * @param {Object} props Component properties
- * @param {Array} props.tasks The tasks to display
- * @param {string} props.authUserIdMain Current user ID
- * @param {Function} props.onViewDetailMain View task detail handler
- * @param {Function} props.onDeleteTaskMain Delete task handler
- * @param {Function} props.onEditTaskMain Edit task handler
- * @param {Function} props.onCompleteTaskMain Complete task handler
  */
-const Lists = (props) => {
+const Lists: React.FC<ListsProps> = (props) => {
   const {
     tasks,
     authUserIdMain,
@@ -43,17 +44,15 @@ const Lists = (props) => {
 
   /**
    * Filters and sorts task groups based on the selected list option.
-   * @returns {Array<Object>} Categorized task groups
+   * @returns {Array<{date: string, tasks: Task[]}>} Categorized task groups
    */
-  const filterAndSortGroups = () => {
+  const filterAndSortGroups = (): Array<{ date: string; tasks: Task[] }> => {
     switch (listsOption) {
       case LIST_OPTION_TODAY:
         return groupKeys
           .filter(
             (key) =>
-              key === todayLocalDate ||
-              key === TASK_CATEGORY_OVERDUE ||
-              key === TASK_CATEGORY_NULL,
+              key === todayLocalDate || key === TASK_CATEGORY_OVERDUE || key === TASK_CATEGORY_NULL
           )
           .sort()
           .map((key) => ({ date: key, tasks: groups[key] }));
@@ -62,15 +61,11 @@ const Lists = (props) => {
         return groupKeys
           .filter(
             (key) =>
-              key <= weekLocalDate ||
-              key === TASK_CATEGORY_OVERDUE ||
-              key === TASK_CATEGORY_NULL,
+              key <= weekLocalDate || key === TASK_CATEGORY_OVERDUE || key === TASK_CATEGORY_NULL
           )
           .sort((a, b) => {
-            if (a === TASK_CATEGORY_OVERDUE || a === TASK_CATEGORY_NULL)
-              return -1;
-            if (b === TASK_CATEGORY_OVERDUE || b === TASK_CATEGORY_NULL)
-              return 1;
+            if (a === TASK_CATEGORY_OVERDUE || a === TASK_CATEGORY_NULL) return -1;
+            if (b === TASK_CATEGORY_OVERDUE || b === TASK_CATEGORY_NULL) return 1;
             return new Date(a).getTime() - new Date(b).getTime();
           })
           .map((key) => ({ date: key, tasks: groups[key] }));
@@ -84,10 +79,8 @@ const Lists = (props) => {
       default:
         return groupKeys
           .sort((a, b) => {
-            if (a === TASK_CATEGORY_OVERDUE || a === TASK_CATEGORY_NULL)
-              return -1;
-            if (b === TASK_CATEGORY_OVERDUE || b === TASK_CATEGORY_NULL)
-              return 1;
+            if (a === TASK_CATEGORY_OVERDUE || a === TASK_CATEGORY_NULL) return -1;
+            if (b === TASK_CATEGORY_OVERDUE || b === TASK_CATEGORY_NULL) return 1;
             if (a === TASK_CATEGORY_COMPLETE) return 1;
             if (b === TASK_CATEGORY_COMPLETE) return -1;
             return new Date(a).getTime() - new Date(b).getTime();
