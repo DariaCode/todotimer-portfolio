@@ -1,14 +1,7 @@
-/* ----------------------------------------------------
-React.js / Settings page component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useContext, useRef, useState } from 'react';
 import AuthContext from '../context/auth-context';
 import DeleteModal from '../components/Modal/DeleteUserModal';
+import { HOUR_IN_MS } from '../utils/constants';
 
 // Material-UI components (https://mui.com/).
 import CssBaseline from '@mui/material/CssBaseline';
@@ -26,7 +19,7 @@ import Box from '@mui/material/Box';
 const SettingsPage = () => {
   const context = useContext(AuthContext);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, _setIsLoading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [changeEmail, setChangeEmail] = useState(false);
   const [changePassword, setChangePassword] = useState(false);
@@ -69,7 +62,7 @@ const SettingsPage = () => {
       setSuccessMsgs('Email successfully changed (Saved Locally)!');
       setShowSuccessMsgs(true);
       setChangeEmail(false);
-      context.login('local', 'local', 3600, newEmail);
+      context.login('local', 'local', HOUR_IN_MS, newEmail);
     }
   };
 

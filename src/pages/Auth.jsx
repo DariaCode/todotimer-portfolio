@@ -1,15 +1,8 @@
-/* ----------------------------------------------------
-React.js / Auth component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/auth-context';
 import MyDivider from '../components/Social_auth/Divider';
+import { HOUR_IN_MS } from '../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import Typography from '@mui/material/Typography';
@@ -26,13 +19,13 @@ import Box from '@mui/material/Box';
 
 function Copyright() {
   return (
-        <Typography variant='body2' color='text.secondary' align='center'>
-            {'Copyright © '}
-            <Link color='inherit' href='https://dariacode.dev/'>
-                DariaCode
-            </Link>{' '} {new Date().getFullYear()}
-            {'.'}
-        </Typography>
+    <Typography variant='body2' color='text.secondary' align='center'>
+      {'Copyright © '}
+      <Link color='inherit' href='https://dariacode.dev/'>
+        DariaCode
+      </Link>{' '} {new Date().getFullYear()}
+      {'.'}
+    </Typography>
   );
 }
 
@@ -41,12 +34,12 @@ const AuthPage = () => {
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(true);
-  const [showError, setShowError] = useState('');
+  const [showError, _setShowError] = useState('');
   const emailEl = useRef();
   const passwordEl = useRef();
 
   const switchModeHandler = () => {
-    setIsLogin(prev => !prev);
+    setIsLogin((prev) => !prev);
   };
 
   const submitHandler = (event) => {
@@ -60,7 +53,7 @@ const AuthPage = () => {
 
     // Mocking login for standalone local mode
     console.log(`${isLogin ? 'Login' : 'Signup'} requested for: ${email}`);
-    context.login('local', 'local', 3600, email);
+    context.login('local', 'local', HOUR_IN_MS, email);
   };
 
   return (
@@ -118,7 +111,7 @@ const AuthPage = () => {
                             fullWidth
                             variant='contained'
                             color='primary'
-                            sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}>
+                            sx={{ margin: (theme) => theme.spacing(UI_SPACING_DEFAULT, 0, 2) }}>
                             {isLogin ? 'Login' : 'Signup'}
                         </Button>
 
@@ -152,7 +145,7 @@ const AuthPage = () => {
                     </Box>
                 </Box>
             </Container>
-            <Box component='footer' sx={{ padding: (theme) => theme.spacing(3, 2), marginTop: 'auto' }}>
+            <Box component='footer' sx={{ padding: (theme) => theme.spacing(UI_SPACING_DEFAULT, 2), marginTop: 'auto' }}>
                 <Container maxWidth='sm'>
                     <Copyright />
                 </Container>

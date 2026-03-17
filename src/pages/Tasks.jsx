@@ -9,8 +9,9 @@ Website: www.dariacode.dev
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import AuthContext from '../context/auth-context';
 
-// Material-UI components (https://mui.com/)
 import { styled } from '@mui/material/styles';
+import { UI_SPACING_DEFAULT, UI_SPACING_LARGE } from '../utils/constants';
+import { generateTaskId, parseRepeatData } from '../utils/taskUtils';
 import EditTaskModal from '../components/Modal/EditTaskModal';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -25,7 +26,7 @@ import IconButton from '@mui/material/IconButton';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Box from '@mui/material/Box';
 
-const RootBox = styled(Box)(({ theme }) => ({
+const RootBox = styled(Box)(() => ({
   display: 'flex',
   paddingTop: '64px',
   flexDirection: 'column',
@@ -33,13 +34,13 @@ const RootBox = styled(Box)(({ theme }) => ({
 
 const TaskViewBox = styled(Box)(({ theme }) => ({
   maxWidth: '60vw',
-  padding: theme.spacing(3, 1),
+  padding: theme.spacing(UI_SPACING_DEFAULT, 1),
   [theme.breakpoints.down('md')]: {
     maxWidth: '100vw',
   },
 }));
 
-const AddTaskIconsBox = styled('form')(({ theme }) => ({
+const AddTaskIconsBox = styled('form')(() => ({
   display: 'flex',
   flexDirection: 'row',
 }));
@@ -48,10 +49,10 @@ const SpinnerBox = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  paddingTop: theme.spacing(10),
+  paddingTop: theme.spacing(UI_SPACING_LARGE),
 }));
 
-const TaskEditBox = styled('form')(({ theme }) => ({
+const TaskEditBox = styled('form')(() => ({
   display: 'flex',
 }));
 
@@ -96,35 +97,26 @@ const TasksPage = () => {
     setCreating(false);
     const title = titleElRef.current.value;
     const priority = +priorityElRef.current.value;
-    let date = dateElRef.current.value;
-    const dateRepeatData = dateRepeatElRef.current.value.split(',');
+    const repeatData = parseRepeatData(dateRepeatElRef.current.value);
 
     let start = null;
     let end = null;
     let intervalK = null;
     let intervalN = null;
 
-    if (dateRepeatData.length > 1) {
-      start = new Date(dateRepeatData[0]).toISOString();
-      end = new Date(dateRepeatData[1]).toISOString();
-      intervalK = parseInt(dateRepeatData[2]);
-      intervalN = dateRepeatData[3];
-      date = start;
+    if (repeatData) {
+      ({ start, end, intervalK, intervalN } = repeatData);
     }
 
     if (title.trim().length === 0 || priority <= 0) {
       return;
     }
 
-    if (date.length === 0) {
-      date = null;
-    }
-
     const newTask = {
-      _id: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      _id: generateTaskId(),
       title,
       priority,
-      date: date || null,
+      date: (repeatData?.date || dateElRef.current.value) || null,
       complete: false,
       start: start || null,
       end: end || null,
@@ -137,7 +129,7 @@ const TasksPage = () => {
     savedTasks.push(newTask);
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-    setTasks(prevTasks => [...prevTasks, newTask]);
+    setTasks((prevTasks) => [...prevTasks, newTask]);
     titleElRef.current.value = '';
   };
 
@@ -157,24 +149,20 @@ const TasksPage = () => {
     const taskId = updatedTask;
     const title = titleElRef.current.value;
     const priority = +priorityElRef.current.value;
-    let date = dateElRef.current.value;
-    const dateRepeatData = dateRepeatElRef.current.value.split(',');
+    const repeatData = parseRepeatData(dateRepeatElRef.current.value);
 
+    let date = dateElRef.current.value;
     let start = null;
     let end = null;
     let intervalK = null;
     let intervalN = null;
 
-    if (dateRepeatData.length > 1) {
-      start = new Date(dateRepeatData[0]).toISOString();
-      end = new Date(dateRepeatData[1]).toISOString();
-      intervalK = parseInt(dateRepeatData[2]);
-      intervalN = dateRepeatData[3];
-      date = start;
+    if (repeatData) {
+      ({ start, end, intervalK, intervalN, date } = repeatData);
     }
 
     const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-    const taskIndex = savedTasks.findIndex(task => task._id === taskId);
+    const taskIndex = savedTasks.findIndex((task) => task._id === taskId);
     if (taskIndex !== -1) {
       savedTasks[taskIndex] = {
         ...savedTasks[taskIndex],
@@ -189,9 +177,9 @@ const TasksPage = () => {
     }
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
 
-    setTasks(prevTasks => {
+    setTasks((prevTasks) => {
       const updatedTasksList = [...prevTasks];
-      const idx = updatedTasksList.findIndex(task => task._id === taskId);
+      const idx = updatedTasksList.findIndex((task) => task._id === taskId);
       if (idx !== -1) {
         updatedTasksList[idx] = {
           ...updatedTasksList[idx],
@@ -209,7 +197,7 @@ const TasksPage = () => {
     setUpdatedTask(null);
   };
 
-  const completeTaskHandler = taskId => {
+  const completeTaskHandler = (taskId) => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
     const taskIndex = savedTasks.findIndex(task => task._id === taskId);
     if (taskIndex !== -1) {
@@ -230,7 +218,7 @@ const TasksPage = () => {
     });
   };
 
-  const deleteTaskHandler = taskId => {
+  const deleteTaskHandler = (taskId) => {
     const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]')
       .filter(task => task._id !== taskId);
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
@@ -272,7 +260,7 @@ const TasksPage = () => {
                           : <Lists
                                 tasks={tasks}
                                 authUserIdMain={context.userId}
-                                onViewDetailMain={() => {}}
+                                onViewDetailMain={(_id) => { console.log('View detail:', _id); }}
                                 onDeleteTaskMain={deleteTaskHandler}
                                 onEditTaskMain={startEditTaskHandler}
                                 onCompleteTaskMain={completeTaskHandler} />

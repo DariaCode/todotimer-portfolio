@@ -1,12 +1,5 @@
-/* ----------------------------------------------------
-React.js / Repeat Task component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useState } from 'react';
+import { RADIX_DEFAULT } from '../../../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';
@@ -64,7 +57,7 @@ const RepeatTask = React.forwardRef((props, ref) => {
 
   const handleFrequencyK = (event) => {
     setDateArray([]);
-    setFrequencyK(parseInt(event.target.value));
+    setFrequencyK(parseInt(event.target.value, RADIX_DEFAULT));
   };
 
   const handleFrequencyN = (event) => {

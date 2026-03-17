@@ -1,11 +1,11 @@
-/* ----------------------------------------------------
-React.js / Task Item component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
 import React, { useState } from 'react';
+import {
+  PRIORITY_HIGH,
+  PRIORITY_LOW,
+  PRIORITY_MEDIUM,
+  UI_GUTTER_BASE,
+  UI_MENU_ITEM_GUTTER,
+} from '../../../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';
@@ -41,18 +41,18 @@ export default function TaskItem(props) {
 
   let currentIcon;
   switch (priority) {
-    case 2:
+    case PRIORITY_LOW:
       currentIcon = <RadioButtonUncheckedIcon sx={{ color: green[500] }} />;
       break;
-    case 3:
+    case PRIORITY_MEDIUM:
       currentIcon = <RadioButtonUncheckedIcon sx={{ color: yellow[500] }} />;
       break;
-    case 4:
+    case PRIORITY_HIGH:
       currentIcon = <RadioButtonUncheckedIcon color='secondary' />;
       break;
     default:
       currentIcon = <RadioButtonUncheckedIcon color='action' />;
-  };
+  }
 
   const options = {
     month: 'short',
@@ -74,9 +74,11 @@ export default function TaskItem(props) {
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <IconButton onClick={() => props.onComplete(props.taskId)}>
-            {props.complete ?
-              <CheckCircleIcon sx={{ color: green[500] }} /> :
-              currentIcon}
+            {props.complete ? (
+              <CheckCircleIcon sx={{ color: green[500] }} />
+            ) : (
+              currentIcon
+            )}
           </IconButton>
           <Typography sx={{ display: 'inline' }}>
             {props.title}
@@ -102,7 +104,7 @@ export default function TaskItem(props) {
             aria-controls='long-menu'
             aria-haspopup='true'
             onClick={handleClick}>
-            <MoreVertIcon/>
+            <MoreVertIcon />
           </IconButton>
           <Menu
             id='simple-menu'
@@ -112,7 +114,7 @@ export default function TaskItem(props) {
             onClose={handleClose}
             PaperProps={{
               sx: {
-                maxHeight: 46 * 4.5,
+                maxHeight: UI_MENU_ITEM_GUTTER * UI_GUTTER_BASE,
                 width: '15ch',
               },
             }}>
@@ -124,7 +126,7 @@ export default function TaskItem(props) {
               }}>
               <EditOutlinedIcon
                 sx={{ mr: 1.5 }}
-                color='action'/>
+                color='action' />
               Edit
             </MenuItem>
             <MenuItem
@@ -135,7 +137,7 @@ export default function TaskItem(props) {
               }}>
               <DeleteOutlineIcon
                 sx={{ mr: 1.5 }}
-                color='action'/>
+                color='action' />
               Delete
             </MenuItem>
           </Menu>
@@ -143,4 +145,4 @@ export default function TaskItem(props) {
       </Card>
     </ListItem>
   );
-};
+}

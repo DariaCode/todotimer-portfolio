@@ -1,13 +1,6 @@
-/* ----------------------------------------------------
-React.js / Reset Password page component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { SHORT_FEEDBACK_DURATION, UI_SPACING_DEFAULT } from '../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import CssBaseline from '@mui/material/CssBaseline';
@@ -39,7 +32,7 @@ const ResetPasswordPage = () => {
       setIsReset(true);
       setEmail('local@user.com'); // Mocked email response
       console.log('Password reset (local mock)');
-    }, 1000);
+    }, SHORT_FEEDBACK_DURATION);
   };
 
   return (
@@ -77,7 +70,7 @@ const ResetPasswordPage = () => {
                                 fullWidth
                                 variant='contained'
                                 color='primary'
-                                sx={{ margin: (theme) => theme.spacing(3, 0, 2) }}>
+                                sx={{ margin: (theme) => theme.spacing(UI_SPACING_DEFAULT, 0, 2) }}>
                                 Reset Password
                             </Button>
                         </Box>
@@ -97,7 +90,11 @@ const ResetPasswordPage = () => {
                                 fullWidth
                                 component={Link}
                                 to='/'
-                                sx={{ textDecoration: 'none', color: 'inherit', margin: (theme) => theme.spacing(3, 0, 2) }}
+                                sx={{
+                                  textDecoration: 'none',
+                                  color: 'inherit',
+                                  margin: (theme) => theme.spacing(UI_SPACING_DEFAULT, 0, 2),
+                                }}
                             >
                                 Go to Homepage
                             </Button>

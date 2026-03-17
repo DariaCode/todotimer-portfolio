@@ -1,11 +1,10 @@
-/* ----------------------------------------------------
-React.js / Priority Picker component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
 import React, { useState } from 'react';
+import {
+  PRIORITY_HIGH,
+  PRIORITY_LOW,
+  PRIORITY_MEDIUM,
+  PRIORITY_NORMAL,
+} from '../../../utils/constants';
 
 // Material-UI components (https://mui.com/)
 import MenuItem from '@mui/material/MenuItem';
@@ -20,9 +19,8 @@ import MediumIcon from './PriorityIcons/medium.svg?react';
 import LowIcon from './PriorityIcons/low.svg?react';
 import HighIcon from './PriorityIcons/high.svg?react';
 
-// eslint-disable-next-line react/display-name
 const PriorityPopper = React.forwardRef((props, ref) => {
-  const [priority, setPriority] = useState(1);
+  const [priority, setPriority] = useState(PRIORITY_NORMAL);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -39,17 +37,17 @@ const PriorityPopper = React.forwardRef((props, ref) => {
 
   let currentIcon;
   switch (+priority) {
-    case 2:
-      currentIcon = <LowIcon/>;
+    case PRIORITY_LOW:
+      currentIcon = <LowIcon />;
       break;
-    case 3:
-      currentIcon = <MediumIcon/>;
+    case PRIORITY_MEDIUM:
+      currentIcon = <MediumIcon />;
       break;
-    case 4:
-      currentIcon = <HighIcon/>;
+    case PRIORITY_HIGH:
+      currentIcon = <HighIcon />;
       break;
     default:
-      currentIcon = <NormalIcon/>;
+      currentIcon = <NormalIcon />;
   }
 
   return (
@@ -70,17 +68,17 @@ const PriorityPopper = React.forwardRef((props, ref) => {
       >
         <Paper elevation={3}>
           <Box sx={{ padding: 1 }}>
-            <MenuItem value={1} onClick={handleChange} sx={{ gap: 1 }}>
-              <NormalIcon/> Normal
+            <MenuItem value={PRIORITY_NORMAL} onClick={handleChange} sx={{ gap: 1 }}>
+              <NormalIcon /> Normal
             </MenuItem>
-            <MenuItem value={2} onClick={handleChange} sx={{ gap: 1 }}>
-              <LowIcon/> Low
+            <MenuItem value={PRIORITY_LOW} onClick={handleChange} sx={{ gap: 1 }}>
+              <LowIcon /> Low
             </MenuItem>
-            <MenuItem value={3} onClick={handleChange} sx={{ gap: 1 }}>
-              <MediumIcon/> Medium
+            <MenuItem value={PRIORITY_MEDIUM} onClick={handleChange} sx={{ gap: 1 }}>
+              <MediumIcon /> Medium
             </MenuItem>
-            <MenuItem value={4} onClick={handleChange} sx={{ gap: 1 }}>
-              <HighIcon/> High
+            <MenuItem value={PRIORITY_HIGH} onClick={handleChange} sx={{ gap: 1 }}>
+              <HighIcon /> High
             </MenuItem>
           </Box>
         </Paper>
@@ -88,5 +86,7 @@ const PriorityPopper = React.forwardRef((props, ref) => {
     </Box>
   );
 });
+
+PriorityPopper.displayName = 'PriorityPopper';
 
 export default PriorityPopper;

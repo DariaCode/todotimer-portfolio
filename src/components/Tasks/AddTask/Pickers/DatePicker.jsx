@@ -1,12 +1,5 @@
-/* ----------------------------------------------------
-React.js / Date Picker component
-
-Updated: 03/2026 (MUI v6)
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
 import React, { useState } from 'react';
-import { addDays, format, startOfToday } from 'date-fns';
+import { addDays, startOfToday } from 'date-fns';
 
 // Material-UI components (https://mui.com/)
 import IconButton from '@mui/material/IconButton';
@@ -17,8 +10,7 @@ import Box from '@mui/material/Box';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 
-// eslint-disable-next-line react/display-name
-const DatePicker = React.forwardRef((props, ref) => {
+const DatePicker = React.forwardRef((_props, ref) => {
   const [selectedDate, setSelectedDate] = useState();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -123,5 +115,7 @@ const DatePicker = React.forwardRef((props, ref) => {
     </Box>
   );
 });
+
+DatePicker.displayName = 'DatePicker';
 
 export default DatePicker;

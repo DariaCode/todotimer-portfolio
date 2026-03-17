@@ -1,167 +1,86 @@
-/* ----------------------------------------------------
-React.js / Lists component
-
-Updated: 05/08/2020
-Author: Daria Vodzinskaia
-Website: www.dariacode.dev
--------------------------------------------------------  */
-
 import React, { useContext } from 'react';
 import ListsContext from '../../../context/lists-context';
-
 import DayList from './DayList';
-import { todayDate, todayLocalDate,
-  weekLocalDate } from '../../../utils/dateUtils';
+import { todayLocalDate, weekLocalDate } from '../../../utils/dateUtils';
+import { groupTasksByCategory } from '../../../utils/taskUtils';
+import {
+  LIST_OPTION_ALL,
+  LIST_OPTION_COMPLETED,
+  LIST_OPTION_TODAY,
+  LIST_OPTION_WEEK,
+} from '../../../utils/constants';
 
-const lists = (props) => {
-  // Divide tasks according to their date and completed status.
-  const lists = props.tasks.reduce((lists, task) => {
-    let { date } = task;
-    if (task.complete) {
-      date = 'Complete';
-    }
-    if (task.date < todayDate && date !== null && date !== 'Complete') {
-      date = 'Overdue';
-    }
-    if ( date !== null && date !== 'Overdue' && date !== 'Complete') {
-      // To change dates to local time zone.
-      const formatedDate = new Date(task.date).toLocaleDateString();
-      date = formatedDate;// task.date.split('T')[0];
-    }
-    if (!lists[date]) {
-      lists[date] = [];
-    }
-    lists[date].push(task);
-    return lists;
-  }, {});
-  const listsGroups = Object.keys(lists).map((date) => {
-    return {
-      date,
-      tasks: lists[date],
-    };
-  });
-  console.log('lists/list', lists);
-
-  let sortedAll = [];
-  let sortedToday = [];
-  let sorted7Days = [];
-  const sortedCompleted = [];
-  const withoutDate = listsGroups.find((list) => list.date === 'null');
-  if (withoutDate) {
-    sortedAll.push(withoutDate);
-    sortedToday.push(withoutDate);
-    sorted7Days.push(withoutDate);
-    ;
-  };
-  const overdueDate = listsGroups.find((list) => list.date === 'Overdue');
-  if (overdueDate) {
-    sortedAll.push(overdueDate);
-    sortedToday.push(overdueDate);
-    sorted7Days.push(overdueDate);
-    ;
-  };
-  const otherDate = listsGroups.filter((list) => list.date !== 'null' && list.date !== 'Overdue' && list.date !== 'Complete');
-  otherDate.sort((a, b) => {
-    return new Date(a.date) - new Date(b.date);
-  });
-  if (otherDate) {
-    sortedAll = sortedAll.concat(otherDate)
-    ;
-  };
-  const completeDate = listsGroups.find((list) => list.date === 'Complete');
-  if (completeDate) {
-    sortedAll = sortedAll.concat(completeDate);
-    sortedCompleted.push(completeDate);
-  };
-
-  const todayDateList = listsGroups.filter((list) => list.date === todayLocalDate);
-  if (todayDateList) {
-    sortedToday = sortedToday.concat(todayDateList);
-  }
-
-  const weekDateList = listsGroups.filter((list) => list.date <= weekLocalDate);
-  if (weekDateList) {
-    sorted7Days = sorted7Days.concat(weekDateList);
-  }
-
-  const listsAll = sortedAll.map((task) => {
-    return (
-      <DayList
-        key={task._id}
-        date={task.date}
-        tasks={task.tasks}
-        authUserId={props.authUserIdMain}
-        onViewDetail={props.onViewDetailMain}
-        onDeleteTask={props.onDeleteTaskMain}
-        onEditTask={props.onEditTaskMain}
-        onCompleteTask={props.onCompleteTaskMain} />
-    );
-  });
-
-  const listsToday = sortedToday.map((task)=>{
-    return (
-      <DayList
-        key={task._id}
-        date={task.date}
-        tasks={task.tasks}
-        authUserId={props.authUserIdMain}
-        onViewDetail={props.onViewDetailMain}
-        onDeleteTask={props.onDeleteTaskMain}
-        onEditTask={props.onEditTaskMain}
-        onCompleteTask={props.onCompleteTaskMain} />
-    );
-  });
-
-  const lists7Days = sorted7Days.map((task)=>{
-    return (
-      <DayList
-        key={task._id}
-        date={task.date}
-        tasks={task.tasks}
-        authUserId={props.authUserIdMain}
-        onViewDetail={props.onViewDetailMain}
-        onDeleteTask={props.onDeleteTaskMain}
-        onEditTask={props.onEditTaskMain}
-        onCompleteTask={props.onCompleteTaskMain} />
-    );
-  });
-
-  const listsCompleted = sortedCompleted.map((task)=>{
-    return (
-      <DayList
-        key={task._id}
-        date={task.date}
-        tasks={task.tasks}
-        authUserId={props.authUserIdMain}
-        onViewDetail={props.onViewDetailMain}
-        onDeleteTask={props.onDeleteTaskMain}
-        onEditTask={props.onEditTaskMain}
-        onCompleteTask={props.onCompleteTaskMain} />
-    );
-  });
-
+const Lists = (props) => {
+  const {
+    tasks,
+    authUserIdMain,
+    onViewDetailMain,
+    onDeleteTaskMain,
+    onEditTaskMain,
+    onCompleteTaskMain,
+  } = props;
 
   const listsContext = useContext(ListsContext);
 
-  let currentLists;
-  switch (listsContext.listsOption) {
-    case 0:
-      currentLists = listsAll;
-      break;
-    case 1:
-      currentLists = listsToday;
-      break;
-    case 2:
-      currentLists = lists7Days;
-      break;
-    case 4:
-      currentLists = listsCompleted;
-      break;
-    default:
-      currentLists = listsAll;
-  }
+  // Group tasks by category
+  const groups = groupTasksByCategory(tasks);
 
-  return <div>{currentLists}</div>;
+  // Define lists for each view
+  const groupKeys = Object.keys(groups);
+
+  const filterAndSortGroups = () => {
+    switch (listsContext.listsOption) {
+      case LIST_OPTION_TODAY:
+        return groupKeys
+          .filter((key) => key === todayLocalDate || key === 'Overdue' || key === 'null')
+          .sort()
+          .map((key) => ({ date: key, tasks: groups[key] }));
+
+      case LIST_OPTION_WEEK:
+        return groupKeys
+          .filter((key) => key <= weekLocalDate || key === 'Overdue' || key === 'null')
+          .sort((a, b) => {
+            if (a === 'Overdue' || a === 'null') return -1;
+            if (b === 'Overdue' || b === 'null') return 1;
+            return new Date(a).getTime() - new Date(b).getTime();
+          })
+          .map((key) => ({ date: key, tasks: groups[key] }));
+
+      case LIST_OPTION_COMPLETED:
+        return groups['Complete'] ? [{ date: 'Complete', tasks: groups['Complete'] }] : [];
+
+      case LIST_OPTION_ALL:
+      default:
+        return groupKeys
+          .sort((a, b) => {
+            if (a === 'Overdue' || a === 'null') return -1;
+            if (b === 'Overdue' || b === 'null') return 1;
+            if (a === 'Complete') return 1;
+            if (b === 'Complete') return -1;
+            return new Date(a).getTime() - new Date(b).getTime();
+          })
+          .map((key) => ({ date: key, tasks: groups[key] }));
+    }
+  };
+
+  const filteredGroups = filterAndSortGroups();
+
+  return (
+    <div>
+      {filteredGroups.map((group) => (
+        <DayList
+          key={group.date}
+          date={group.date}
+          tasks={group.tasks}
+          authUserId={authUserIdMain}
+          onViewDetail={onViewDetailMain}
+          onDeleteTask={onDeleteTaskMain}
+          onEditTask={onEditTaskMain}
+          onCompleteTask={onCompleteTaskMain}
+        />
+      ))}
+    </div>
+  );
 };
 
-export default lists;
+export default Lists;
