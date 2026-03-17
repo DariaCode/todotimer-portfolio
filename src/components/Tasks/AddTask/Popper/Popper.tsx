@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  PRIORITY_HIGH,
-  PRIORITY_LOW,
-  PRIORITY_MEDIUM,
-  PRIORITY_NORMAL,
-} from '@/utils/constants';
+import { PRIORITY_HIGH, PRIORITY_LOW, PRIORITY_MEDIUM, PRIORITY_NORMAL } from '@/utils/constants';
 
 // Material-UI components (https://mui.com/)
 import MenuItem from '@mui/material/MenuItem';
@@ -19,23 +14,31 @@ import MediumIcon from './PriorityIcons/medium.svg?react';
 import LowIcon from './PriorityIcons/low.svg?react';
 import HighIcon from './PriorityIcons/high.svg?react';
 
-const PriorityPopper = React.forwardRef((props, ref) => {
-  const [priority, setPriority] = useState(PRIORITY_NORMAL);
-  const [anchorEl, setAnchorEl] = useState(null);
+interface PriorityPopperProps {
+  // Add any props if needed, but the original seems to rely on ref and standard IconButton props
+  [key: string]: any;
+}
 
-  const handleClick = (event) => {
+const PriorityPopper = React.forwardRef<HTMLButtonElement, PriorityPopperProps>((_props, ref) => {
+  const [priority, setPriority] = useState<string>(PRIORITY_NORMAL.toString());
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popper' : undefined;
 
-  const handleChange = (event) => {
-    setPriority(event.currentTarget.getAttribute('value'));
+  const handleChange = (event: React.MouseEvent<HTMLLIElement>) => {
+    const val = event.currentTarget.getAttribute('value');
+    if (val) {
+      setPriority(val);
+    }
     setAnchorEl(null);
   };
 
-  let currentIcon;
+  let currentIcon: React.ReactNode;
   switch (+priority) {
     case PRIORITY_LOW:
       currentIcon = <LowIcon />;
@@ -52,12 +55,7 @@ const PriorityPopper = React.forwardRef((props, ref) => {
 
   return (
     <Box className='form-control'>
-      <IconButton
-        aria-describedby={id}
-        onClick={handleClick}
-        ref={ref}
-        value={priority}
-      >
+      <IconButton aria-describedby={id} onClick={handleClick} ref={ref} value={priority}>
         {currentIcon}
       </IconButton>
       <Popper

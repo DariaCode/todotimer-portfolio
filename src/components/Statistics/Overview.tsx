@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Material-UI components (https://mui.com/)
-import Grid from '@mui/material/Grid2';
+import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Box from '@mui/material/Box';
