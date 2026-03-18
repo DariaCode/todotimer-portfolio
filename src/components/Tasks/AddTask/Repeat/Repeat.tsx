@@ -96,7 +96,21 @@ const RepeatTask = React.forwardRef<HTMLButtonElement, RepeatTaskProps>((_props,
         id={id}
         open={open}
         anchorEl={anchorEl}
+        placement='bottom-start'
         sx={{ zIndex: (theme) => theme.zIndex.modal + 2 }}
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            enabled: true,
+            options: {
+              boundary: 'viewport',
+            },
+          },
+          {
+            name: 'flip',
+            enabled: true,
+          },
+        ]}
       >
         <Paper elevation={3}>
           <Box sx={{ display: 'flex', flexDirection: 'column', padding: 1, gap: 1 }}>

@@ -26,6 +26,7 @@ const RootBox = styled(Box)(() => ({
 const TaskViewBox = styled(Box)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(UI_SPACING_DEFAULT, 1),
+  paddingTop: '30px',
 }));
 
 const AddTaskIconsBox = styled('form')(() => ({
@@ -196,8 +197,8 @@ const TasksPage: React.FC = () => {
   };
 
   const deleteTaskHandler = (taskId: string) => {
-    const savedTasks: Task[] = JSON.parse(localStorage.getItem('tasks') || '[]').filter(
-      (task) => task._id !== taskId
+    const savedTasks: Task[] = (JSON.parse(localStorage.getItem('tasks') || '[]') as Task[]).filter(
+      (task: Task) => task._id !== taskId
     );
     localStorage.setItem('tasks', JSON.stringify(savedTasks));
 

@@ -17,7 +17,19 @@ interface EditTaskModalProps {
 
 const EditTaskModal: React.FC<EditTaskModalProps> = ({ onConfirm, onCancel, children }) => {
   return (
-    <Dialog open fullWidth aria-labelledby='form-dialog-title'>
+    <Dialog
+      open
+      fullWidth
+      aria-labelledby='form-dialog-title'
+      sx={{
+        '& .MuiDialog-container': {
+          alignItems: 'flex-start',
+        },
+        '& .MuiPaper-root': {
+          marginTop: (theme) => theme.spacing(4),
+        },
+      }}
+    >
       <DialogTitle id='form-dialog-title'>Edit Task</DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions
