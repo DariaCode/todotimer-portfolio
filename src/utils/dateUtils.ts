@@ -64,6 +64,16 @@ for (let i = 0; i < DAYS_IN_WEEK; i++) {
 
 const localDates = localDateArr.reverse();
 
+/**
+ * Formats a date to the consistent local format used for task grouping and filtering.
+ * @param date The date to format
+ * @returns Formatted date string in "M/d/yyyy" format
+ */
+const formatToLocalDate = (date: Date | string): string => {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return format(d, 'M/d/yyyy');
+};
+
 export {
   today,
   todayDate,
@@ -77,4 +87,5 @@ export {
   localDates,
   getOrdinal,
   formatWithOrdinal,
+  formatToLocalDate,
 };

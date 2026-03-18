@@ -15,22 +15,36 @@ interface AddTaskProps {
 }
 
 const AddTask: React.FC<AddTaskProps> = ({ onConfirm, onCancel, children }) => {
+  const handleConfirm = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onConfirm();
+  };
+
+  const handleCancel = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onCancel();
+  };
+
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
       <Box>
         <Button
+          type='button'
           variant='contained'
           color='primary'
-          onClick={onConfirm}
+          onClick={handleConfirm}
           startIcon={<AddCircleOutlineIcon />}
           sx={{ minWidth: '128px', margin: 1 }}
         >
           Add Task
         </Button>
         <Button
+          type='button'
           variant='outlined'
           color='secondary'
-          onClick={onCancel}
+          onClick={handleCancel}
           startIcon={<HighlightOffIcon />}
           sx={{ minWidth: '128px', margin: 1 }}
         >

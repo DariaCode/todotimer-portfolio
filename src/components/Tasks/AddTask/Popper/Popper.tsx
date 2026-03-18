@@ -15,12 +15,14 @@ import LowIcon from './PriorityIcons/low.svg?react';
 import HighIcon from './PriorityIcons/high.svg?react';
 
 interface PriorityPopperProps {
+  initialPriority?: number;
   // Add any props if needed, but the original seems to rely on ref and standard IconButton props
   [key: string]: any;
 }
 
-const PriorityPopper = React.forwardRef<HTMLButtonElement, PriorityPopperProps>((_props, ref) => {
-  const [priority, setPriority] = useState<string>(PRIORITY_NORMAL.toString());
+const PriorityPopper = React.forwardRef<HTMLButtonElement, PriorityPopperProps>((props, ref) => {
+  const { initialPriority } = props;
+  const [priority, setPriority] = useState<string>((initialPriority ?? PRIORITY_NORMAL).toString());
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

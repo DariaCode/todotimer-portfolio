@@ -19,16 +19,30 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import LoopIcon from '@mui/icons-material/Loop';
 
 interface RepeatTaskProps {
+  initialStartDate?: string | null;
+  initialEndDate?: string | null;
+  initialFrequencyK?: number | null;
+  initialFrequencyN?: string | null;
   [key: string]: any;
 }
 
-const RepeatTask = React.forwardRef<HTMLButtonElement, RepeatTaskProps>((_props, ref) => {
-  const [selectedStartDate, setSelectedStartDate] = useState<string>(new Date().toISOString());
-  const [selectedEndDate, setSelectedEndDate] = useState<string>(new Date().toISOString());
+const RepeatTask = React.forwardRef<HTMLButtonElement, RepeatTaskProps>((props, ref) => {
+  const { initialStartDate, initialEndDate, initialFrequencyK, initialFrequencyN } = props;
+
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(
+    initialStartDate || new Date().toISOString()
+  );
+  const [selectedEndDate, setSelectedEndDate] = useState<string>(
+    initialEndDate || new Date().toISOString()
+  );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [dateArray, setDateArray] = useState<any[] | undefined>();
-  const [frequencyK, setFrequencyK] = useState<number>(1);
-  const [frequencyN, setFrequencyN] = useState<string>('day');
+  const [dateArray, setDateArray] = useState<any[] | undefined>(
+    initialFrequencyK && initialFrequencyN
+      ? [initialStartDate, initialEndDate, initialFrequencyK, initialFrequencyN]
+      : undefined
+  );
+  const [frequencyK, setFrequencyK] = useState<number>(initialFrequencyK || 1);
+  const [frequencyN, setFrequencyN] = useState<string>(initialFrequencyN || 'day');
   const [custom, setCustom] = useState<boolean>(false);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -1,9 +1,5 @@
-import {
-  TASK_CATEGORY_COMPLETE,
-  TASK_CATEGORY_NULL,
-  TASK_CATEGORY_OVERDUE,
-} from './constants';
-import { todayDate } from './dateUtils';
+import { TASK_CATEGORY_COMPLETE, TASK_CATEGORY_NULL, TASK_CATEGORY_OVERDUE } from './constants';
+import { formatToLocalDate, todayDate } from './dateUtils';
 
 export interface Task {
   _id: string;
@@ -86,7 +82,7 @@ export const groupTasksByCategory = (tasks: Task[]): TaskGroups => {
       category = TASK_CATEGORY_OVERDUE;
     } else if (task.date) {
       // To change dates to local time zone.
-      category = new Date(task.date).toLocaleDateString();
+      category = formatToLocalDate(task.date);
     } else {
       category = TASK_CATEGORY_NULL;
     }

@@ -78,7 +78,8 @@ const TasksPage: React.FC = () => {
     };
   }, []);
 
-  const startCreateTaskHandler = () => {
+  const startCreateTaskHandler = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setCreating(true);
   };
 
@@ -127,7 +128,9 @@ const TasksPage: React.FC = () => {
     setCreating(false);
     const data = getTaskData();
 
-    if (!data.title.trim() || data.priority <= 0) return;
+    if (!data.title.trim() || data.priority <= 0) {
+      return;
+    }
 
     const newTask: Task = {
       ...data,
@@ -251,33 +254,46 @@ const TasksPage: React.FC = () => {
           </TaskViewBox>
         </Container>
 
-        {updating && updatedTask && (
-          <EditTaskModal
-            onCancel={modalCancelHandler}
-            onConfirm={editTaskHandler}
-            confirmText='confirm'
-          >
-            <TaskEditBox>
-              <TextField
-                id='outlined-basic-edit'
-                label='Edit task'
-                variant='outlined'
-                size='medium'
-                multiline
-                fullWidth
-                inputRef={titleElRef}
-              />
-              <PriorityPopper ref={priorityElRef} />
-              <DatePicker ref={dateElRef} />
-              <RepeatTask ref={dateRepeatElRef} />
-              <Box>
-                <IconButton onClick={() => deleteTaskHandler(updatedTask)}>
-                  <DeleteOutlineIcon color='secondary' />
-                </IconButton>
-              </Box>
-            </TaskEditBox>
-          </EditTaskModal>
-        )}
+        {updating &&
+          updatedTask &&
+          (() => {
+            const task = tasks.find((t) => t._id === updatedTask);
+            if (!task) return null;
+            return (
+              <EditTaskModal
+                onCancel={modalCancelHandler}
+                onConfirm={editTaskHandler}
+                confirmText='confirm'
+              >
+                <TaskEditBox>
+                  <TextField
+                    id='outlined-basic-edit'
+                    label='Edit task'
+                    variant='outlined'
+                    size='medium'
+                    multiline
+                    fullWidth
+                    inputRef={titleElRef}
+                    defaultValue={task.title}
+                  />
+                  <PriorityPopper ref={priorityElRef} initialPriority={task.priority} />
+                  <DatePicker ref={dateElRef} initialDate={task.date} />
+                  <RepeatTask
+                    ref={dateRepeatElRef}
+                    initialStartDate={task.start}
+                    initialEndDate={task.end}
+                    initialFrequencyK={task.intervalK}
+                    initialFrequencyN={task.intervalN}
+                  />
+                  <Box>
+                    <IconButton onClick={() => deleteTaskHandler(updatedTask)}>
+                      <DeleteOutlineIcon color='secondary' />
+                    </IconButton>
+                  </Box>
+                </TaskEditBox>
+              </EditTaskModal>
+            );
+          })()}
       </RootBox>
     </React.Fragment>
   );

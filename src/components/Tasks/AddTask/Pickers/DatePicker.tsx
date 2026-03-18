@@ -11,11 +11,13 @@ import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 
 interface DatePickerProps {
+  initialDate?: string | null;
   [key: string]: any;
 }
 
-const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>((_props, ref) => {
-  const [selectedDate, setSelectedDate] = useState<string | undefined>();
+const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>((props, ref) => {
+  const { initialDate } = props;
+  const [selectedDate, setSelectedDate] = useState<string | undefined>(initialDate || undefined);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
