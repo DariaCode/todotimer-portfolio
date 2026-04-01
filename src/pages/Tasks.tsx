@@ -140,9 +140,9 @@ const TasksPage: React.FC = () => {
     };
 
     const saved = JSON.parse(localStorage.getItem('tasks') || '[]');
-    localStorage.setItem('tasks', JSON.stringify([...saved, newTask]));
+    localStorage.setItem('tasks', JSON.stringify([newTask, ...saved]));
 
-    setTasks((prev) => [...prev, newTask]);
+    setTasks((prev) => [newTask, ...prev]);
     if (titleElRef.current) {
       titleElRef.current.value = '';
     }
