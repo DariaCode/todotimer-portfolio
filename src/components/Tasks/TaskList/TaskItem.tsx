@@ -31,7 +31,7 @@ interface TaskItemProps {
   priority: number;
   date: string;
   complete: boolean;
-  repeat: string;
+  repeat: boolean;
   userId: string;
   creatorId: string;
   onDetail: (id: string) => void;
@@ -91,7 +91,7 @@ const TaskItem: React.FC<TaskItemProps> = (props) => {
           <Typography sx={{ display: 'inline' }}>{title}</Typography>
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {repeat !== null && (
+          {repeat && (
             <IconButton disabled>
               <LoopIcon color='action' fontSize='small' sx={{ padding: 0.1 }} />
             </IconButton>

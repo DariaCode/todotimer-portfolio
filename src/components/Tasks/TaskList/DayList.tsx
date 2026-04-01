@@ -31,7 +31,7 @@ const DayLists: React.FC<DayListProps> = (props) => {
         priority={task.priority}
         date={task.date || ''}
         complete={task.complete}
-        repeat={task.end || ''}
+        repeat={task.intervalK !== null}
         userId={authUserId}
         creatorId={task.creator._id}
         onDetail={onViewDetail}
